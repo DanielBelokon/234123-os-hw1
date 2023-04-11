@@ -21,7 +21,7 @@ public:
     SmallShell(SmallShell const &) = delete;     // disable copy ctor
     void operator=(SmallShell const &) = delete; // disable = operator
     int getPID();
-
+    std::string getPWD();
     std::string getPrompt()
     {
         return prompt;
