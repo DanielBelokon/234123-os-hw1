@@ -6,15 +6,25 @@
 
 class BuiltInCommand : public Command
 {
+protected:
+    std::vector<std::string> cmd_v;
+
 public:
-    BuiltInCommand(const char *cmd_line) : Command(cmd_line) {}
+    BuiltInCommand(const char *cmd_line) : Command(cmd_line)
+    {
+        cmd_v = CommandUtils::_split(cmd_line, ' ');
+    }
     virtual ~BuiltInCommand() {}
 };
 
 class ChangeDirCommand : public BuiltInCommand
 {
-    // TODO: Add your data members public:
-    ChangeDirCommand(const char *cmd_line, char **plastPwd);
+public:
+    std::string path;
+    static std::string prevPath;
+
+public:
+    ChangeDirCommand(const char *cmd_line);
     virtual ~ChangeDirCommand() {}
     void execute() override;
 };
@@ -40,8 +50,8 @@ class ChangePromptCommand : public BuiltInCommand
     std::string prompt;
 
 public:
-    ChangePromptCommand(const char *cmd_line);
-    ChangePromptCommand(const std::vector<std::string> &cmd_v);
+    ChangePromptCommand(const char *cmd_line) : BuiltInCommand(cmd_line) {}
+    // ChangePromptCommand(const std::vector<std::string> &cmd_v);
     virtual ~ChangePromptCommand() {}
     void execute() override;
 };
