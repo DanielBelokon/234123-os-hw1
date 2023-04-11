@@ -2,7 +2,7 @@
 
 #pragma region ChangePromptCommand
 
-ChangePromptCommand::ChangePromptCommand(const std::vector<std::string> &cmd_v) : BuiltInCommand("")
+ChangePromptCommand::ChangePromptCommand(const std::vector<std::string> &cmd_v) : BuiltInCommand(cmd_v[0].c_str())
 {
     if (cmd_v.size() > 1)
     {
@@ -30,7 +30,7 @@ ShowPidCommand::ShowPidCommand(const char *cmd_line) : BuiltInCommand(cmd_line)
 /// @brief Show the PID of the shell
 void ShowPidCommand::execute()
 {
-    std::cout << "smash pid is " << SmallShell::getInstance().getPID() << std::endl;
+    this->getOutputStream() << "smash pid is " << SmallShell::getInstance().getPID() << std::endl;
 }
 #pragma endregion
 
@@ -52,6 +52,6 @@ GetCurrDirCommand::GetCurrDirCommand(const char *cmd_line) : BuiltInCommand(cmd_
 }
 void GetCurrDirCommand::execute()
 {
-    std::cout << SmallShell::getInstance().getPWD() << std::endl;
+    this->getOutputStream() << SmallShell::getInstance().getPWD() << std::endl;
 }
 #pragma endregion
