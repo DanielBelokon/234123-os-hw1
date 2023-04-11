@@ -1,5 +1,3 @@
-enable_testing()
-
 # Add gtest
 include(FetchContent)
 FetchContent_Declare(

@@ -8,4 +8,6 @@ file(GLOB SOURCES *.cpp *.h)
 
 add_executable(skeleton_smash ${SOURCES})
 
+include(CTest)
+
 add_subdirectory(tests)
