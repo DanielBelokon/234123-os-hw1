@@ -1,9 +1,17 @@
 #include "BuiltInCommands.h"
 
 #pragma region ChangePromptCommand
-ChangePromptCommand::ChangePromptCommand(const char *cmd_line) : BuiltInCommand(cmd_line)
+
+ChangePromptCommand::ChangePromptCommand(const std::vector<std::string> &cmd_v) : BuiltInCommand("")
 {
-    prompt = std::string(cmd_line).substr(9);
+    if (cmd_v.size() > 1)
+    {
+        prompt = cmd_v[1];
+    }
+    else
+    {
+        prompt = "smash";
+    }
 }
 
 /// @brief Change the prompt of the shell

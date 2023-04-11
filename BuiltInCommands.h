@@ -41,6 +41,7 @@ class ChangePromptCommand : public BuiltInCommand
 
 public:
     ChangePromptCommand(const char *cmd_line);
+    ChangePromptCommand(const std::vector<std::string> &cmd_v);
     virtual ~ChangePromptCommand() {}
     void execute() override;
 };

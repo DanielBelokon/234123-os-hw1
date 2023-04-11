@@ -20,11 +20,12 @@ Command *SmallShell::CreateCommand(const char *cmd_line)
     // For example:
 
     std::string cmd_s = _trim(std::string(cmd_line));
+    std::vector<std::string> cmd_v = _split(cmd_s, ' ');
     std::string firstWord = cmd_s.substr(0, cmd_s.find_first_of(" \n"));
 
     if (firstWord.compare("chprompt") == 0)
     {
-        return new ChangePromptCommand(cmd_line);
+        return new ChangePromptCommand(cmd_v);
     }
     else if (firstWord.compare("showpid") == 0)
     {

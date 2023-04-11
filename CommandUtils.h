@@ -86,4 +86,16 @@ namespace CommandUtils
         // truncate the command line string up to the last non-space character
         cmd_line[str.find_last_not_of(WHITESPACE, idx) + 1] = 0;
     }
+
+    inline std::vector<std::string> _split(const std::string &s, char delim)
+    {
+        std::vector<std::string> elems;
+        std::stringstream ss(s);
+        std::string item;
+        while (std::getline(ss, item, delim))
+        {
+            elems.push_back(item);
+        }
+        return elems;
+    }
 }
