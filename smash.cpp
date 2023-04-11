@@ -1,8 +1,4 @@
-#include <iostream>
-#include <unistd.h>
-#include <sys/wait.h>
-#include <signal.h>
-#include "Commands.h"
+#include "SmallShell.h"
 #include "signals.h"
 
 int main(int argc, char* argv[]) {
@@ -13,11 +9,15 @@ int main(int argc, char* argv[]) {
         perror("smash error: failed to set ctrl-C handler");
     }
 
-    //TODO: setup sig alarm handler
+    // if (signal(SIGINT, alarmHandler) == SIG_ALARM)
+    // {
+    //     perror("smash error: failed to set alarm handler");
+    // }
+    // TODO: setup sig alarm handler
 
     SmallShell& smash = SmallShell::getInstance();
     while(true) {
-        std::cout << "smash> ";
+        std::cout << smash.getPrompt();
         std::string cmd_line;
         std::getline(std::cin, cmd_line);
         smash.executeCommand(cmd_line.c_str());
