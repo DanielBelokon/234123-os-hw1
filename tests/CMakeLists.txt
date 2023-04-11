@@ -23,4 +23,3 @@ target_include_directories(${PROJECT_NAME}_tests PUBLIC ${gtest_SOURCE_DIR}/incl
 target_link_libraries(${PROJECT_NAME}_tests gtest_main)
 
 gtest_discover_tests(${PROJECT_NAME}_tests)
-gtest_discover_tests(${PROJECT_NAME}_tests)
