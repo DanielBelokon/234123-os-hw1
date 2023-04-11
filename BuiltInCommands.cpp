@@ -45,3 +45,13 @@ void ChangeDirCommand::execute()
 }
 
 #pragma endregion
+
+#pragma region GetCurrDirCommand
+GetCurrDirCommand::GetCurrDirCommand(const char *cmd_line) : BuiltInCommand(cmd_line)
+{
+}
+GetCurrDirCommand::execute()
+{
+    std::cout << SmallShell::getInstance().getPWD() << std::endl;
+}
+#pragma endregion

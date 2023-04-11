@@ -33,7 +33,7 @@ Command *SmallShell::CreateCommand(const char *cmd_line)
     }
     else if (firstWord.compare("pwd") == 0)
     {
-        // return new GetCurrDirCommand(cmd_line);
+         return new GetCurrDirCommand(cmd_line);
     }
     // else if (firstWord.compare("cd") == 0)
     // {
@@ -79,4 +79,10 @@ void SmallShell::executeCommand(const char *cmd_line)
 int SmallShell::getPID()
 {
     return getpid();
+}
+std::string SmallShell::getPWD()
+{
+    char cwd[1024];
+    getcwd(cwd, sizeof(cwd));
+    return std::string(cwd);
 }
