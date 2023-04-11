@@ -2,6 +2,8 @@
 #define SMASH_COMMAND_H_
 
 #include <vector>
+#include <iostream>
+#include <cstdarg>
 
 #define COMMAND_ARGS_MAX_LENGTH (200)
 #define COMMAND_MAX_ARGS (20)
@@ -9,10 +11,31 @@
 class Command
 {
   // TODO: Add your data members
+  // output stream for the command
+  std::ostream *out;
+
 public:
   Command(const char *cmd_line);
   virtual ~Command();
   virtual void execute() = 0;
+
+  void setOutputStream(std::ostream *out)
+  {
+    this->out = out;
+  }
+
+  std::ostream &getOutputStream()
+  {
+    if (out != nullptr)
+    {
+      return *out;
+    }
+    else // default output stream
+    {
+      return std::cout;
+    }
+  }
+
   // virtual void prepare();
   // virtual void cleanup();
   //  TODO: Add your extra methods if needed
