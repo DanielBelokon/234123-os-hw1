@@ -18,5 +18,5 @@ TEST(GetCurrentDirectoryTests, TestGetCurrentDirectory)
     std::string actual(buffer);
 
     command.execute();
-    EXPECT_EQ(out.str(), actual);
+    EXPECT_EQ(out.str(), actual + "\n");
 }
