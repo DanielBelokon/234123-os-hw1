@@ -1,3 +1,14 @@
+[![CMake](https://github.com/DanielBelokon/234123-os-hw1/actions/workflows/cmake.yml/badge.svg)](https://github.com/DanielBelokon/234123-os-hw1/actions/workflows/cmake.yml)
+
+## README provided by staff:
+
+
+
+
+
+
+
+
 The given skeleton includes the following files:
 - Commands.h/Commands.cpp: The supported commands of smash, each command is represented by a class that inherits from either BuiltInCommand or ExternalCommand. Each command that you add should implement execute, which is a virtual method, that executes the command.
 - signals.h/signals.cpp: Declares and implements requires signal handlers: SIGINT handler to handle Ctr+C and SIGTSTP to handle Ctrl+Z. If you are going to implement the bonus part then you have to implement additional handler for SIG_ALRM.
