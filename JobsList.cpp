@@ -1,4 +1,5 @@
 #include "JobsList.h"
+#include <iostream>
 
 JobsList::JobsList()
 {
@@ -7,13 +8,17 @@ JobsList::JobsList()
 
 JobsList::~JobsList()
 {
-    delete jobs;
+    for (auto &job : jobs)
+    {
+        delete job;
+    }
 }
 
 void JobsList::addJob(Command *cmd, bool isStopped)
 {
     // maybe we need to execute the command first ? and get the pid from the execute ?
-    // pid_t pid = execute(); ?
+    //pid_t pid = (int)cmd->execute(); // Note : execute is void , maybe need to change.
+    pid_t pid = 0; //just for building
     JobEntry *job = new JobEntry(cmd, maxJobId, pid, isStopped ? STOPPED : RUNNING);
     jobs.push_back(job);
     maxJobId++;
@@ -25,9 +30,9 @@ void JobsList::printJobsList()
 
     for (auto &job : jobs)
     {
-        std::cout << "[" << job->job.id << "]" << job->cmd->getCommand() << " : " << job->jobPid << " ";
-        time_t time = difftime(time(NULL), job->jobStartTime);
-        std::cout << time << " secs";
+        std::cout << "[" << job->jobId << "]" << job->cmd->getCommand() << " : " << job->jobPid << " ";
+        time_t delta_time = difftime(time(nullptr), job->timeStarted);
+        std::cout << delta_time << " secs";
         if (job->status == STOPPED)
         {
             std::cout << " (stopped)";
@@ -53,6 +58,7 @@ JobsList::JobEntry *JobsList::getJobById(int jobId)
             return jobs[i];
         }
     }
+    return NULL;
 }
 
 void JobsList::removeJobById(int jobId)
@@ -80,4 +86,5 @@ JobsList::JobEntry *JobsList::getLastStoppedJob(int *jobId)
             return jobs[i];
         }
     }
+    return NULL;
 }
