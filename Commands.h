@@ -4,6 +4,7 @@
 #include <vector>
 #include <iostream>
 #include <cstdarg>
+#include "CommandUtils.h"
 
 #define COMMAND_ARGS_MAX_LENGTH (200)
 #define COMMAND_MAX_ARGS (20)
@@ -14,9 +15,15 @@ class Command
   // output stream for the command
   std::ostream *out;
 
+protected:
+  std::vector<std::string> cmd_v;
+
 public:
-  Command(const char *cmd_line);
-  virtual ~Command();
+  Command(const char *cmd_line)
+  {
+    cmd_v = CommandUtils::_split(cmd_line, ' ');
+  }
+  virtual ~Command(){};
   virtual void execute() = 0;
 
   void setOutputStream(std::ostream *out)

@@ -7,13 +7,10 @@
 
 class BuiltInCommand : public Command
 {
-protected:
-    std::vector<std::string> cmd_v;
 
 public:
     BuiltInCommand(const char *cmd_line) : Command(cmd_line)
     {
-        cmd_v = CommandUtils::_split(cmd_line, ' ');
     }
     virtual ~BuiltInCommand() {}
 };
@@ -22,7 +19,6 @@ class ChangeDirCommand : public BuiltInCommand
 {
 public:
     std::string path;
-    static std::string prevPath;
 
 public:
     ChangeDirCommand(const char *cmd_line);
