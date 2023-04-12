@@ -11,6 +11,5 @@ Command::~Command()
 }
 std::string Command::getCommand() const
 {
-    std::string firstWord = firstWordOfCommand.substr(0, firstWordOfCommand.find_first_of(" \n"));
-    reutrn firsrWord;
+    return _firstWordOfCommand;
 }
