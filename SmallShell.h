@@ -5,7 +5,7 @@
 // #include "PipeCommand.h"
 // #include "RedirectionCommand.h"
 #include <string>
-
+#include <linux/limits.h>
 #include "CommandUtils.h"
 
 class SmallShell
