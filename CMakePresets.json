@@ -1,0 +1,46 @@
+{
+    "version": 6,
+    "configurePresets": [
+      {
+        "name": "linux-debug",
+        "displayName": "Linux Debug",
+        "cacheVariables": {
+          "CMAKE_BUILD_TYPE": "Debug",
+          "CMAKE_C_COMPILER": "gcc",
+          "CMAKE_CXX_COMPILER": "g++"
+        },
+        "binaryDir": "${sourceDir}/build/linux-debug"
+      }
+    ],
+    "buildPresets": [
+      {
+        "name": "default",
+        "displayName": "Default Build",
+        "configurePreset": "linux-debug",
+        "jobs": 8
+      },
+      {
+        "name": "clean-build",
+        "displayName": "Clean Build",
+        "configurePreset": "linux-debug",
+        "jobs": 8,
+        "cleanFirst": true
+      }
+    ],
+    "testPresets": [
+      {
+        "name": "default",
+        "displayName": "Default Test",
+        "configurePreset": "linux-debug",
+        "configuration": "default",
+        "output": {
+          "outputOnFailure": true
+        },
+        "execution": {
+          "jobs": 8,
+          "noTestsAction": "error",
+          "stopOnFailure": true
+        }
+      }
+    ]
+}

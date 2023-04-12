@@ -2,19 +2,26 @@
 
 #include "Commands.h"
 #include "SmallShell.h"
+#include "CommandUtils.h"
 #include <string>
 
 class BuiltInCommand : public Command
 {
+
 public:
-    BuiltInCommand(const char *cmd_line) : Command(cmd_line) {}
+    BuiltInCommand(const char *cmd_line) : Command(cmd_line)
+    {
+    }
     virtual ~BuiltInCommand() {}
 };
 
 class ChangeDirCommand : public BuiltInCommand
 {
-    // TODO: Add your data members public:
-    ChangeDirCommand(const char *cmd_line, char **plastPwd);
+public:
+    std::string path;
+
+public:
+    ChangeDirCommand(const char *cmd_line);
     virtual ~ChangeDirCommand() {}
     void execute() override;
 };
@@ -40,8 +47,8 @@ class ChangePromptCommand : public BuiltInCommand
     std::string prompt;
 
 public:
-    ChangePromptCommand(const char *cmd_line);
-    ChangePromptCommand(const std::vector<std::string> &cmd_v);
+    ChangePromptCommand(const char *cmd_line) : BuiltInCommand(cmd_line) {}
+    // ChangePromptCommand(const std::vector<std::string> &cmd_v);
     virtual ~ChangePromptCommand() {}
     void execute() override;
 };

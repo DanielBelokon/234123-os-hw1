@@ -13,19 +13,37 @@ class SmallShell
 private:
     std::string prompt = "smash> ";
     int PID = 0;
+    std::string prevPath;
     // TODO: Add your data members
     SmallShell();
 
 public:
-    Command *CreateCommand(const char *cmd_line);
+    ~SmallShell();
+
     SmallShell(SmallShell const &) = delete;     // disable copy ctor
     void operator=(SmallShell const &) = delete; // disable = operator
-    int getPID();
-    std::string getPWD();
+
+    void executeCommand(const char *cmd_line);
+    Command *CreateCommand(const char *cmd_line);
+
+    int getPid();
+    std::string getWorkingDir();
+
+    void setPrevPath(const std::string &path)
+    {
+        prevPath = path;
+    }
+
+    std::string getPrevPath()
+    {
+        return prevPath;
+    }
+
     std::string getPrompt()
     {
         return prompt;
     }
+
     void setPrompt(std::string &prompt)
     {
         this->prompt = prompt + "> ";
@@ -37,7 +55,4 @@ public:
         // Instantiated on first use.
         return instance;
     }
-    ~SmallShell();
-    void executeCommand(const char *cmd_line);
-    // TODO: add extra methods as needed
 };

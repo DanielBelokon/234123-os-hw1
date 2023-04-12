@@ -25,7 +25,7 @@ Command *SmallShell::CreateCommand(const char *cmd_line)
 
     if (firstWord.compare("chprompt") == 0)
     {
-        return new ChangePromptCommand(cmd_v);
+        return new ChangePromptCommand(cmd_line);
     }
     else if (firstWord.compare("showpid") == 0)
     {
@@ -33,7 +33,7 @@ Command *SmallShell::CreateCommand(const char *cmd_line)
     }
     else if (firstWord.compare("pwd") == 0)
     {
-        return new GetCurrDirCommand(cmd_line);
+         return new GetCurrDirCommand(cmd_line);
     }
     // else if (firstWord.compare("cd") == 0)
     // {
@@ -76,9 +76,15 @@ void SmallShell::executeCommand(const char *cmd_line)
     // Please note that you must fork smash process for some commands (e.g., external commands....)
 }
 
-int SmallShell::getPID()
+int SmallShell::getPid()
 {
     return getpid();
+}
+std::string SmallShell::getWorkingDir()
+{
+    char cwd[1024];
+    getcwd(cwd, sizeof(cwd));
+    return std::string(cwd);
 }
 
 std::string SmallShell::getPWD()
