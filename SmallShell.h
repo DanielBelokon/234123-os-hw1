@@ -14,7 +14,7 @@ private:
     std::string prompt = "smash> ";
     int PID = 0;
     std::string prevPath;
-    // TODO: Add your data members
+    // TODO: Add foreground job and jobs list
     SmallShell();
 
 public:
