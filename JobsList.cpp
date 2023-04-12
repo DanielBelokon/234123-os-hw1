@@ -26,6 +26,7 @@ void JobsList::removeFinishedJobs()
 
 JobsList::JobEntry *JobsList::getJobById(int jobId)
 {
+    return nullptr;
 }
 
 void JobsList::removeJobById(int jobId)
@@ -34,8 +35,10 @@ void JobsList::removeJobById(int jobId)
 
 JobsList::JobEntry *JobsList::getLastJob(int *lastJobId)
 {
+    return nullptr;
 }
 
 JobsList::JobEntry *JobsList::getLastStoppedJob(int *jobId)
 {
+    return nullptr;
 }
