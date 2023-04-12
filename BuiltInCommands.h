@@ -2,6 +2,7 @@
 
 #include "Commands.h"
 #include "SmallShell.h"
+#include "CommandUtils.h"
 #include <string>
 
 class BuiltInCommand : public Command
