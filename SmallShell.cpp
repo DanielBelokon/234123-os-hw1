@@ -82,14 +82,7 @@ int SmallShell::getPid()
 }
 std::string SmallShell::getWorkingDir()
 {
-    char cwd[1024];
-    getcwd(cwd, sizeof(cwd));
+    char cwd[PATH_MAX];
+    getcwd(cwd, PATH_MAX);
     return std::string(cwd);
-}
-
-std::string SmallShell::getPWD()
-{
-    char buf[PATH_MAX];
-    getcwd(buf, PATH_MAX);
-    return std::string(buf);
 }
