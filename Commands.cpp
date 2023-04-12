@@ -9,7 +9,7 @@ Command::Command(const char *cmd_line)
 Command::~Command()
 {
 }
-std::string Command::Get() const
+std::string Command::getCommand() const
 {
     std::string firstWord = firstWordOfCommand.substr(0, firstWordOfCommand.find_first_of(" \n"));
     reutrn firsrWord;
