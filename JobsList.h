@@ -1,6 +1,6 @@
 #pragma once
 
-#include "Commands.h"
+#include "ExternalCommands.h"
 #include <ctime>
 #include <vector>
 class JobsList
@@ -17,14 +17,14 @@ public:
     class JobEntry
     {
         public:
-        Command* cmd;
-        int jobId;
-        int jobPid;
-        JobStatus status;
-        time_t timeStarted;
-        JobEntry(Command* cmd, int jobId, int pid, JobStatus status): cmd(cmd), jobId(jobId), jobPid(pid), status(status),timeStarted(time(nullptr))
-        {
-        }
+            ExternalCommand *cmd;
+            int jobId;
+            int jobPid;
+            JobStatus status;
+            time_t timeStarted;
+            JobEntry(ExternalCommand *cmd, int jobId, int pid, JobStatus status) : cmd(cmd), jobId(jobId), jobPid(pid), status(status), timeStarted(time(nullptr))
+            {
+            }
     };
     // TODO: Add your data members
 private:
@@ -35,7 +35,7 @@ private:
 public:
     JobsList();
     ~JobsList();
-    void addJob(Command *cmd, bool isStopped = false);
+    void addJob(ExternalCommand *cmd, bool isStopped = false);
     void printJobsList();
     void killAllJobs();
     void removeFinishedJobs();

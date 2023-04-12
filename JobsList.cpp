@@ -14,11 +14,11 @@ JobsList::~JobsList()
     }
 }
 
-void JobsList::addJob(Command *cmd, bool isStopped)
+void JobsList::addJob(ExternalCommand *cmd, bool isStopped)
 {
     // maybe we need to execute the command first ? and get the pid from the execute ?
     //pid_t pid = (int)cmd->execute(); // Note : execute is void , maybe need to change.
-    pid_t pid = 0; //just for building
+    pid_t pid = cmd->getPid();
     JobEntry *job = new JobEntry(cmd, maxJobId, pid, isStopped ? STOPPED : RUNNING);
     jobs.push_back(job);
     maxJobId++;
