@@ -9,10 +9,12 @@
 class Command
 {
   // TODO: Add your data members
+  const char* _firstWordOfCommand;
 public:
   Command(const char *cmd_line);
   virtual ~Command();
   virtual void execute() = 0;
+  string getCommand() const;
   // virtual void prepare();
   // virtual void cleanup();
   //  TODO: Add your extra methods if needed
