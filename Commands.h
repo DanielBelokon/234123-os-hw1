@@ -2,6 +2,7 @@
 #define SMASH_COMMAND_H_
 
 #include <vector>
+#include <iostream>
 
 #define COMMAND_ARGS_MAX_LENGTH (200)
 #define COMMAND_MAX_ARGS (20)
@@ -9,12 +10,12 @@
 class Command
 {
   // TODO: Add your data members
-  const char* _firstWordOfCommand;
+  std::string _firstWordOfCommand;
 public:
   Command(const char *cmd_line);
   virtual ~Command();
   virtual void execute() = 0;
-  string getCommand() const;
+  std::string getCommand() const;
   // virtual void prepare();
   // virtual void cleanup();
   //  TODO: Add your extra methods if needed
