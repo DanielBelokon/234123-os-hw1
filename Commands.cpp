@@ -11,5 +11,5 @@ Command::~Command()
 }
 std::string Command::getCommand() const
 {
-    return _firstWordOfCommand;
+    return cmd_v[0];
 }
