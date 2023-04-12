@@ -30,7 +30,7 @@ void JobsList::printJobsList()
 
     for (auto &job : jobs)
     {
-        std::cout << "[" << job->jobId << "]" << job->cmd->getCommand() << " : " << job->jobPid << " ";
+        std::cout << "[" << job->jobId << "]" << job->cmd->getCommandName() << " : " << job->jobPid << " ";
         time_t delta_time = difftime(time(nullptr), job->timeStarted);
         std::cout << delta_time << " secs";
         if (job->status == STOPPED)
