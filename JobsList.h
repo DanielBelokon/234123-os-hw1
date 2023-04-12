@@ -1,15 +1,37 @@
 #pragma once
 
 #include "Commands.h"
-
+#include <ctime>
+#include <vector>
 class JobsList
 {
+    enum JobStatus
+    {
+        RUNNING,
+        STOPPED,
+        DONE,
+        REMOVED
+    };
+
 public:
     class JobEntry
     {
-        // TODO: Add your data members
+        public:
+        Command* cmd;
+        int jobId;
+        int jobPid;
+        JobStatus status;
+        time_t timeStarted;
+        JobEntry(Command* cmd, int jobId, int pid, JobStatus status): cmd(cmd), jobId(jobId), jobPid(pid), status(status),timeStarted(time(nullptr))
+        {
+        }
     };
     // TODO: Add your data members
+private:
+
+    std::vector<JobEntry*> jobs;
+    int maxJobId;
+
 public:
     JobsList();
     ~JobsList();
