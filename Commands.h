@@ -25,7 +25,7 @@ public:
   }
   virtual ~Command(){};
   virtual void execute() = 0;
-
+  std::string getCommandName() ;
   void setOutputStream(std::ostream *out)
   {
     this->out = out;

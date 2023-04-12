@@ -9,7 +9,7 @@ Command::Command(const char *cmd_line)
 Command::~Command()
 {
 }
-std::string Command::getCommand() const
+std::string Command::getCommandName() const
 {
     return cmd_v[0];
 }
