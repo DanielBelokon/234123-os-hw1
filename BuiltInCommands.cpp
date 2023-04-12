@@ -50,7 +50,7 @@ void ChangeDirCommand::execute()
 GetCurrDirCommand::GetCurrDirCommand(const char *cmd_line) : BuiltInCommand(cmd_line)
 {
 }
-GetCurrDirCommand::execute()
+ void GetCurrDirCommand::execute()
 {
         std::cout << SmallShell::getInstance().getPWD() << std::endl;
 
