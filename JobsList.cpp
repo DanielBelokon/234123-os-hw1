@@ -101,7 +101,7 @@ JobsList::JobEntry *JobsList::getLastStoppedJob(int *jobId)
     return NULL;
 }
 
-JobsList::getMaxJobIdInArray()
+int JobsList::getMaxJobIdInArray()
 {
     int temp = -1;
     for (int i = 0; i < jobs.size(); i++)
@@ -113,11 +113,11 @@ JobsList::getMaxJobIdInArray()
     }
     return temp;
 }
-JobsList::updateMaxJobId()
+void JobsList::updateMaxJobId()
 {
     maxJobId = getMaxJobIdInArray();
 }
-JobsList::getJobWithMaxID()
+JobEntry* JobsList::getJobWithMaxID()
 {
     for (int i = 0; i < jobs.size(); i++)
     {
