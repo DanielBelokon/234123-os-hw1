@@ -75,3 +75,55 @@ TEST(ChangeCurrentDirectoryTests, TooManyArgs)
 
     EXPECT_EQ(out.str(), "smash error: cd: too many arguments\n");
 }
+
+// Test jobs command
+TEST(JobsListTests, TestJobsList)
+{
+    ExternalCommand *command1 = new ExternalCommand("sleep 1");
+    ExternalCommand *command2 = new ExternalCommand("sleep 2");
+    ExternalCommand *command3 = new ExternalCommand("sleep 3");
+    SmallShell::getInstance().getJobsList().addJob(command1, false);
+    SmallShell::getInstance().getJobsList().addJob(command2, false);
+    SmallShell::getInstance().getJobsList().addJob(command3, false);
+
+    JobsCommand command = JobsCommand("jobs");
+    std::ostringstream out;
+    command.setOutputStream(&out);
+    command.execute();
+
+    // compare by line
+
+    std::string expected = out.str();
+    std::string actual;
+    actual += "[1]sleep : " + std::to_string(command1->getPid()) + " 0 secs\n";
+    actual += "[2]sleep : " + std::to_string(command2->getPid()) + " 0 secs\n";
+    actual += "[3]sleep : " + std::to_string(command3->getPid()) + " 0 secs\n";
+
+    EXPECT_EQ(expected, actual);
+}
+
+// Test fg command
+
+TEST(ForegroundCommandTests, TestForegroundCommand)
+{
+    ExternalCommand *command1 = new ExternalCommand("sleep 1");
+    ExternalCommand *command2 = new ExternalCommand("sleep 2");
+    ExternalCommand *command3 = new ExternalCommand("sleep 3");
+    SmallShell::getInstance().getJobsList().addJob(command1, false);
+    SmallShell::getInstance().getJobsList().addJob(command2, false);
+    SmallShell::getInstance().getJobsList().addJob(command3, false);
+
+    ForegroundCommand command = ForegroundCommand("fg 2");
+    std::ostringstream out;
+    command.setOutputStream(&out);
+    command.execute();
+
+    // compare by line
+
+    std::string expected = out.str();
+    std::string actual;
+
+    actual += "sleep : " + std::to_string(command2->getPid()) + "\n";
+
+    EXPECT_EQ(expected, actual);
+}

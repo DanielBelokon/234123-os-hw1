@@ -18,25 +18,24 @@ void JobsList::addJob(ExternalCommand *cmd, bool isStopped)
     // maybe we need to execute the command first ? and get the pid from the execute ?
     //pid_t pid = (int)cmd->execute(); // Note : execute is void , maybe need to change.
     pid_t pid = cmd->getPid();
-    JobEntry job = JobEntry(cmd, maxJobId, pid, isStopped ? STOPPED : RUNNING);
+    JobEntry job = JobEntry(cmd, ++maxJobId, pid, isStopped ? STOPPED : RUNNING);
     jobs.push_back(job);
-    maxJobId++;
 }
 
-void JobsList::printJobsList()
+void JobsList::printJobsList(std::ostream &out)
 {
     removeFinishedJobs();
 
     for (auto &job : jobs)
     {
-        std::cout << "[" << job.jobId << "]" << job.cmd->getCommandName() << " : " << job.jobPid << " ";
+        out << "[" << job.jobId << "]" << job.cmd->getCommandName() << " : " << job.jobPid << " ";
         time_t delta_time = difftime(time(nullptr), job.timeStarted);
-        std::cout << delta_time << " secs";
+        out << delta_time << " secs";
         if (job.status == STOPPED)
         {
-            std::cout << " (stopped)";
+            out << " (stopped)";
         }
-        std::cout << std::endl;
+        out << std::endl;
     }
 }
 

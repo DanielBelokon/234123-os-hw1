@@ -90,7 +90,7 @@ JobsCommand::JobsCommand(const char *cmd_line) : BuiltInCommand(cmd_line)
 
 void JobsCommand::execute()
 {
-    SmallShell::getInstance().getJobsList().printJobsList();
+    SmallShell::getInstance().getJobsList().printJobsList(this->getOutputStream());
 }
 
 #pragma endregion
@@ -122,7 +122,7 @@ void ForegroundCommand::execute()
 void ForegroundCommand::MoveJobToForeground(JobsList::JobEntry &job)
 {
     // print the command with PID
-    this->getOutputStream() << cmd_v[0] << " : " << job.getJobPid() << std::endl;
+    this->getOutputStream() << job.cmd->getCommandName() << " : " << job.getJobPid() << std::endl;
     // sent job to foreground
     SmallShell::getInstance().getJobsList().removeJobById(job.getJobId());
     kill(job.getJobPid(), SIGCONT);

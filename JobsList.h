@@ -44,7 +44,7 @@ public:
     ~JobsList();
     std::vector<JobEntry> &getJobsVectorList();
     void addJob(ExternalCommand *cmd, bool isStopped = false);
-    void printJobsList();
+    void printJobsList(std::ostream &out = std::cout);
     void killAllJobs();
     void removeFinishedJobs();
     void updateMaxJobId();

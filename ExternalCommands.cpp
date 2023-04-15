@@ -1,7 +1,14 @@
 #include "ExternalCommands.h"
+#include "SmallShell.h"
+
+ExternalCommand::ExternalCommand(const char *cmd_line) : Command(cmd_line)
+{
+    this->_executeInBackground = CommandUtils::_isBackgroundComamnd(cmd_line);
+}
 
 void ExternalCommand::execute()
 {
+    // Create a forked external process
     pid = fork();
     if (pid == 0)
     {
@@ -18,16 +25,18 @@ void ExternalCommand::execute()
         // TODO: Handle error, check required message
         perror("smash error: >");
     }
+    // Parent process
     else
     {
-        // Parent process - check if foreground or background
-        if (cmd_v[cmd_v.size() - 1] == "&")
+        if (this->_executeInBackground)
         {
-            // TODO: Add to jobs list
+            // add to jobs list
+            SmallShell::getInstance().getJobsList().addJob(this);
         }
         else
         {
-            // TODO: Foreground process through SmallShell function
+            // wait for child process to finish
+            waitpid(pid, NULL, WUNTRACED);
         }
     }
 }
@@ -39,4 +48,9 @@ int ExternalCommand::getPid()
 void ExternalCommand::killProcess(){
     // to do : implement.
     return ;
+}
+
+bool ExternalCommand::isExecuteInBackground()
+{
+    return _executeInBackground;
 }
