@@ -39,9 +39,12 @@ public:
     void printJobsList();
     void killAllJobs();
     void removeFinishedJobs();
+    void updateMaxJobId();
     JobEntry *getJobById(int jobId);
     void removeJobById(int jobId);
     JobEntry *getLastJob(int *lastJobId);
     JobEntry *getLastStoppedJob(int *jobId);
+    int getMaxJobIdInArray();
+    JobEntry *getJobWithMaxID();
     // TODO: Add extra methods or modify exisitng ones as needed
 };

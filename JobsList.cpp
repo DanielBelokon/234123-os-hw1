@@ -43,10 +43,22 @@ void JobsList::printJobsList()
 
 void JobsList::killAllJobs()
 {
+    for (auto &job : jobs)
+    {
+        job->cmd->killProcess();
+    }
 }
 
 void JobsList::removeFinishedJobs()
 {
+    for (int i = 0; i < jobs.size(); i++)
+    {
+        if (jobs[i]->status == DONE || jobs[i]->status == REMOVED)
+        {
+            jobs.erase(jobs.begin() + i);
+        }
+    }
+    updateMaxJobId();
 }
 
 JobsList::JobEntry *JobsList::getJobById(int jobId)
@@ -82,6 +94,34 @@ JobsList::JobEntry *JobsList::getLastStoppedJob(int *jobId)
     for (int i = jobs.size() - 1; i >= 0; i--)
     {
         if (jobs[i]->status == STOPPED)
+        {
+            return jobs[i];
+        }
+    }
+    return NULL;
+}
+
+JobsList::getMaxJobIdInArray()
+{
+    int temp = -1;
+    for (int i = 0; i < jobs.size(); i++)
+    {
+        if (jobs[i]->jobId > temp)
+        {
+            temp = jobs[i]->jobId;
+        }
+    }
+    return temp;
+}
+JobsList::updateMaxJobId()
+{
+    maxJobId = getMaxJobIdInArray();
+}
+JobsList::getJobWithMaxID()
+{
+    for (int i = 0; i < jobs.size(); i++)
+    {
+        if (jobs[i]->jobId == maxJobId)
         {
             return jobs[i];
         }
