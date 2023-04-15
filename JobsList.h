@@ -25,6 +25,14 @@ public:
             JobEntry(ExternalCommand *cmd, int jobId, int pid, JobStatus status) : cmd(cmd), jobId(jobId), jobPid(pid), status(status), timeStarted(time(nullptr))
             {
             }
+            int getJobId()
+            {
+                return jobId;
+            }
+            int getJobPid()
+            {
+                return jobPid;
+            }
     };
     // TODO: Add your data members
 private:
@@ -35,6 +43,7 @@ private:
 public:
     JobsList();
     ~JobsList();
+    std::vector<JobEntry*> getJobsVectorList();
     void addJob(ExternalCommand *cmd, bool isStopped = false);
     void printJobsList();
     void killAllJobs();
