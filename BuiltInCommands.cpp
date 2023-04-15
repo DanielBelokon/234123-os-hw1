@@ -95,7 +95,7 @@ void ForegroundCommand::execute()
 {
     JobsList::JobEntry *job = nullptr;
     // check if there is any id with the command
-    if (cmd_v.size() > 1)
+    if (cmd_v.size() > 2)
     {
         this->getOutputStream() << "smash error: fg: invalid arguments" << std::endl;
     }
