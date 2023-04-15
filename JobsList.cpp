@@ -117,7 +117,7 @@ void JobsList::updateMaxJobId()
 {
     maxJobId = getMaxJobIdInArray();
 }
-JobEntry* JobsList::getJobWithMaxID()
+JobsList::JobEntry* JobsList::getJobWithMaxID()
 {
     for (int i = 0; i < jobs.size(); i++)
     {
