@@ -22,8 +22,11 @@ protected:
 public:
   Command(const char *cmd_line)
   {
-    cmd_v = CommandUtils::_split(cmd_line, ' ');
+    std::string cmd_line_s = cmd_line;
+    CommandUtils::_removeBackgroundSign(cmd_line_s);
+    cmd_v = CommandUtils::_split(cmd_line_s, ' ');
   }
+
   virtual ~Command(){};
   virtual void execute() = 0;
   std::string getCommandName() const;

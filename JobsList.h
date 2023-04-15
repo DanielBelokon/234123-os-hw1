@@ -36,24 +36,23 @@ public:
     };
     // TODO: Add your data members
 private:
-
-    std::vector<JobEntry*> jobs;
+    std::vector<JobEntry> jobs;
     int maxJobId;
 
 public:
     JobsList();
     ~JobsList();
-    std::vector<JobEntry*> getJobsVectorList();
+    std::vector<JobEntry> &getJobsVectorList();
     void addJob(ExternalCommand *cmd, bool isStopped = false);
-    void printJobsList();
+    void printJobsList(std::ostream &out = std::cout);
     void killAllJobs();
     void removeFinishedJobs();
     void updateMaxJobId();
-    JobEntry *getJobById(int jobId);
+    JobEntry &getJobById(int jobId);
     void removeJobById(int jobId);
-    JobEntry *getLastJob(int *lastJobId);
-    JobEntry *getLastStoppedJob(int *jobId);
+    JobEntry &getLastJob(int lastJobId);
+    JobEntry &getLastStoppedJob(int jobId);
     int getMaxJobIdInArray();
-    JobEntry *getJobWithMaxID();
+    JobEntry &getJobWithMaxID();
     // TODO: Add extra methods or modify exisitng ones as needed
 };

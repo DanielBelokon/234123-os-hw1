@@ -15,7 +15,7 @@ private:
     int PID = 0;
     std::string prevPath;
     // TODO: Add foreground job and jobs list
-    JobsList* _jobsList;
+    JobsList _jobsList;
     SmallShell();
 
 public:
@@ -29,7 +29,7 @@ public:
 
     int getPid();
     std::string getWorkingDir();
-    JobsList* getJobsList();
+    JobsList &getJobsList();
     void setPrevPath(const std::string &path)
     {
         prevPath = path;

@@ -4,7 +4,6 @@ using namespace CommandUtils;
 
 SmallShell::SmallShell()
 {
-    // TODO: add your implementation
 }
 
 SmallShell::~SmallShell()
@@ -33,32 +32,12 @@ Command *SmallShell::CreateCommand(const char *cmd_line)
     }
     else if (firstWord.compare("pwd") == 0)
     {
-         return new GetCurrDirCommand(cmd_line);
+        return new GetCurrDirCommand(cmd_line);
     }
-    // else if (firstWord.compare("cd") == 0)
-    // {
-    //     return new ChangeDirCommand(cmd_line);
-    // }
-    // else if (firstWord.compare("jobs") == 0)
-    // {
-    //     return new JobsCommand(cmd_line);
-    // }
-    // else if (firstWord.compare("kill") == 0)
-    // {
-    //     return new KillCommand(cmd_line);
-    // }
-    // else if (firstWord.compare("fg") == 0)
-    // {
-    //     return new ForegroundCommand(cmd_line);
-    // }
-    // else if (firstWord.compare("bg") == 0)
-    // {
-    //     return new BackgroundCommand(cmd_line);
-    // }
-    // else if (firstWord.compare("quit") == 0)
-    // {
-    //     return new QuitCommand(cmd_line);
-    // }
+    else if (firstWord.compare("jobs") == 0)
+    {
+        return new JobsCommand(cmd_line);
+    }
     else
     {
         // return new ExternalCommand(cmd_line);
@@ -86,7 +65,7 @@ std::string SmallShell::getWorkingDir()
     getcwd(cwd, PATH_MAX);
     return std::string(cwd);
 }
-JobsList* SmallShell::getJobsList()
+JobsList &SmallShell::getJobsList()
 {
     return _jobsList;
 }

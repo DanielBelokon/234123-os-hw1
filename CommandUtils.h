@@ -66,25 +66,13 @@ namespace CommandUtils
         return str[str.find_last_not_of(WHITESPACE)] == '&';
     }
 
-    inline void _removeBackgroundSign(char *cmd_line)
+    inline void _removeBackgroundSign(std::string &cmd_line)
     {
-        const std::string str(cmd_line);
-        // find last character other than spaces
-        unsigned int idx = str.find_last_not_of(WHITESPACE);
-        // if all characters are spaces then return
-        if (idx == std::string::npos)
+        cmd_line = _trim(cmd_line);
+        if (cmd_line[cmd_line.length() - 1] == '&')
         {
-            return;
+            cmd_line = cmd_line.substr(0, cmd_line.length() - 1);
         }
-        // if the command line does not end with & then return
-        if (cmd_line[idx] != '&')
-        {
-            return;
-        }
-        // replace the & (background sign) with space and then remove all tailing spaces.
-        cmd_line[idx] = ' ';
-        // truncate the command line string up to the last non-space character
-        cmd_line[str.find_last_not_of(WHITESPACE, idx) + 1] = 0;
     }
 
     inline std::vector<std::string> _split(const std::string &s, char delim)

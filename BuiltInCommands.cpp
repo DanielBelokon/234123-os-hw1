@@ -84,16 +84,24 @@ void GetCurrDirCommand::execute()
 
 #pragma region JobsCommand
 
+JobsCommand::JobsCommand(const char *cmd_line) : BuiltInCommand(cmd_line)
+{
+}
+
+void JobsCommand::execute()
+{
+    SmallShell::getInstance().getJobsList().printJobsList(this->getOutputStream());
+}
+
 #pragma endregion
 
 #pragma region ForegroundCommand
-ForegroundCommand::ForegroundCommand(const char *cmd_line,JobsList *jobs) : BuiltInCommand(cmd_line)
+ForegroundCommand::ForegroundCommand(const char *cmd_line) : BuiltInCommand(cmd_line)
 {
-    this->jobs = jobs;
 }
+
 void ForegroundCommand::execute()
 {
-    JobsList::JobEntry *job = nullptr;
     // check if there is any id with the command
     if (cmd_v.size() > 2)
     {
@@ -102,26 +110,22 @@ void ForegroundCommand::execute()
 
     if (cmd_v.size() == 1)
     {
-        job = jobs->getJobWithMaxID();
+        JobsList::JobEntry job = SmallShell::getInstance().getJobsList().getJobWithMaxID();
         MoveJobToForeground(job);
     }
     else{
         int id = atoi(cmd_v[1].c_str());
-        job = jobs->getJobById(id);
+        JobsList::JobEntry job = SmallShell::getInstance().getJobsList().getJobById(id);
         MoveJobToForeground(job);
     }
 }
-void ForegroundCommand::MoveJobToForeground(JobsList::JobEntry *job)
+void ForegroundCommand::MoveJobToForeground(JobsList::JobEntry &job)
 {
-     if (job == nullptr) {
-                this->getOutputStream() << "smash error: fg: jobs list is empty" << std::endl;
-                return;
-        }
-    	//print the command with PID
-        this->getOutputStream() << cmd_v[0] << " : " << job->getJobPid() << std::endl;
-        // sent job to foreground
-        jobs->removeJobById(job->getJobId());
-        kill(job->getJobPid(), SIGCONT);
-        waitpid(job->getJobPid(), nullptr, WUNTRACED);
+    // print the command with PID
+    this->getOutputStream() << job.cmd->getCommandName() << " : " << job.getJobPid() << std::endl;
+    // sent job to foreground
+    SmallShell::getInstance().getJobsList().removeJobById(job.getJobId());
+    kill(job.getJobPid(), SIGCONT);
+    waitpid(job.getJobPid(), nullptr, WUNTRACED);
 }
 #pragma endregion
