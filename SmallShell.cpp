@@ -88,5 +88,5 @@ std::string SmallShell::getWorkingDir()
 }
 JobsList* SmallShell::getJobsList()
 {
-    return jobsList;
+    return _jobsList;
 }

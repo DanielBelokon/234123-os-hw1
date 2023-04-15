@@ -13,7 +13,7 @@ JobsList::~JobsList()
         delete job;
     }
 }
-std::vector<JobEntry *> JobsList::getJobsVectorList()
+std::vector<JobsList::JobEntry *> JobsList::getJobsVectorList()
 {
     return jobs;
 }

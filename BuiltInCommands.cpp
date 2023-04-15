@@ -1,5 +1,4 @@
 #include "BuiltInCommands.h"
-
 #pragma region ChangePromptCommand
 
 /// @brief Change the prompt of the shell
@@ -88,11 +87,13 @@ void GetCurrDirCommand::execute()
 #pragma endregion
 
 #pragma region ForegroundCommand
-ForegroundCommand::ForegroundCommand(const char *cmd_line) : BuiltInCommand(cmd_line)
+ForegroundCommand::ForegroundCommand(const char *cmd_line,JobsList *jobs) : BuiltInCommand(cmd_line)
 {
+    this->jobs = jobs;
 }
 void ForegroundCommand::execute()
 {
+    JobsList::JobEntry *job = nullptr;
     // check if there is any id with the command
     if (cmd_v.size() > 1)
     {
@@ -101,18 +102,16 @@ void ForegroundCommand::execute()
 
     if (cmd_v.size() == 1)
     {
-        JobsList *jobs = SmallShell::getInstance().getJobsList();
-        JobList::JobEntry *job = jobs->getJobWithMaxId();
+        job = jobs->getJobWithMaxID();
         MoveJobToForeground(job);
     }
     else{
         int id = atoi(cmd_v[1].c_str());
-        JobsList *jobs = SmallShell::getInstance().getJobsList();
-        JobList::JobEntry *job = jobs->getJobById(id);
+        job = jobs->getJobById(id);
         MoveJobToForeground(job);
     }
 }
-void ForegroundCommand::MoveJobToForeground(EntryJob *job)
+void ForegroundCommand::MoveJobToForeground(JobsList::JobEntry *job)
 {
      if (job == nullptr) {
                 this->getOutputStream() << "smash error: fg: jobs list is empty" << std::endl;
