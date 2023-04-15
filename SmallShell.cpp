@@ -86,3 +86,7 @@ std::string SmallShell::getWorkingDir()
     getcwd(cwd, PATH_MAX);
     return std::string(cwd);
 }
+JobsList* SmallShell::getJobsList()
+{
+    return jobsList;
+}
