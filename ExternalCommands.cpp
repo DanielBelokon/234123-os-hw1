@@ -36,3 +36,7 @@ int ExternalCommand::getPid()
 {
     return pid;
 }
+void ExternalCommand::killProcess(){
+    // to do : implement.
+    return ;
+}
