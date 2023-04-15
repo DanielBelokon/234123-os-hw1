@@ -82,3 +82,47 @@ void GetCurrDirCommand::execute()
     this->getOutputStream() << SmallShell::getInstance().getWorkingDir() << std::endl;
 }
 #pragma endregion
+
+#pragma region JobsCommand
+
+#pragma endregion
+
+#pragma region ForegroundCommand
+ForegroundCommand::ForegroundCommand(const char *cmd_line) : BuiltInCommand(cmd_line)
+{
+}
+void ForegroundCommand::execute()
+{
+    // check if there is any id with the command
+    if (cmd_v.size() > 1)
+    {
+        this->getOutputStream() << "smash error: fg: invalid arguments" << std::endl;
+    }
+
+    if (cmd_v.size() == 1)
+    {
+        JobsList *jobs = SmallShell::getInstance().getJobsList();
+        JobList::JobEntry *job = jobs->getJobWithMaxId();
+        MoveJobToForeground(job);
+    }
+    else{
+        int id = atoi(cmd_v[1].c_str());
+        JobsList *jobs = SmallShell::getInstance().getJobsList();
+        JobList::JobEntry *job = jobs->getJobById(id);
+        MoveJobToForeground(job);
+    }
+}
+void ForegroundCommand::MoveJobToForeground(EntryJob *job)
+{
+     if (job == nullptr) {
+                this->getOutputStream() << "smash error: fg: jobs list is empty" << std::endl;
+                return;
+        }
+    	//print the command with PID
+        this->getOutputStream() << cmd_v[0] << " : " << job->getJobPid() << std::endl;
+        // sent job to foreground
+        kill(job->getJobPid(), SIGCONT);
+        waitpid(job->getJobPid(), nullptr, WUNTRACED);
+        jobs->removeJobById(job->getJobId());
+}
+#pragma endregion

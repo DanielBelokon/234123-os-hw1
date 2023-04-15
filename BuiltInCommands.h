@@ -3,6 +3,7 @@
 #include "Commands.h"
 #include "SmallShell.h"
 #include "CommandUtils.h"
+#include "JobsList.h"
 #include <string>
 
 class BuiltInCommand : public Command
@@ -75,10 +76,12 @@ public:
 class ForegroundCommand : public BuiltInCommand
 {
     // TODO: Add your data members
+    void MoveJobToForefround(EntryJob *job);
 public:
     ForegroundCommand(const char *cmd_line, JobsList *jobs);
     virtual ~ForegroundCommand() {}
     void execute() override;
+    
 };
 
 class BackgroundCommand : public BuiltInCommand
