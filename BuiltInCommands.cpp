@@ -120,8 +120,8 @@ void ForegroundCommand::MoveJobToForeground(JobsList::JobEntry *job)
     	//print the command with PID
         this->getOutputStream() << cmd_v[0] << " : " << job->getJobPid() << std::endl;
         // sent job to foreground
+        jobs->removeJobById(job->getJobId());
         kill(job->getJobPid(), SIGCONT);
         waitpid(job->getJobPid(), nullptr, WUNTRACED);
-        jobs->removeJobById(job->getJobId());
 }
 #pragma endregion
