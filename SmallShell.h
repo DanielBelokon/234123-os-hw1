@@ -7,7 +7,7 @@
 #include <string>
 #include <linux/limits.h>
 #include "CommandUtils.h"
-
+#include "JobsList.h"
 class SmallShell
 {
 private:
@@ -15,6 +15,7 @@ private:
     int PID = 0;
     std::string prevPath;
     // TODO: Add foreground job and jobs list
+    JobsList* _jobsList;
     SmallShell();
 
 public:
@@ -28,7 +29,7 @@ public:
 
     int getPid();
     std::string getWorkingDir();
-
+    JobsList* getJobsList();
     void setPrevPath(const std::string &path)
     {
         prevPath = path;

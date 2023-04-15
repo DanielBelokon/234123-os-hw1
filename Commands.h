@@ -5,6 +5,7 @@
 #include <iostream>
 #include <cstdarg>
 #include "CommandUtils.h"
+#include <sys/wait.h>
 
 #define COMMAND_ARGS_MAX_LENGTH (200)
 #define COMMAND_MAX_ARGS (20)

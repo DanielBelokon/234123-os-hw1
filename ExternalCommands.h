@@ -1,5 +1,5 @@
 #include "Commands.h"
-
+#pragma once
 class ExternalCommand : public Command
 {
     int pid;

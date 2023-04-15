@@ -13,7 +13,10 @@ JobsList::~JobsList()
         delete job;
     }
 }
-
+std::vector<JobsList::JobEntry *> JobsList::getJobsVectorList()
+{
+    return jobs;
+}
 void JobsList::addJob(ExternalCommand *cmd, bool isStopped)
 {
     // maybe we need to execute the command first ? and get the pid from the execute ?
@@ -98,7 +101,7 @@ JobsList::JobEntry *JobsList::getLastStoppedJob(int *jobId)
             return jobs[i];
         }
     }
-    return NULL;
+    return nullptr;
 }
 
 int JobsList::getMaxJobIdInArray()
@@ -126,5 +129,5 @@ JobsList::JobEntry* JobsList::getJobWithMaxID()
             return jobs[i];
         }
     }
-    return NULL;
+    return nullptr;
 }
