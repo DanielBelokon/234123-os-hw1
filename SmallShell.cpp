@@ -21,7 +21,7 @@ Command *SmallShell::CreateCommand(const char *cmd_line)
     std::string cmd_s = _trim(std::string(cmd_line));
     std::vector<std::string> cmd_v = _split(cmd_s, ' ');
     std::string firstWord = cmd_s.substr(0, cmd_s.find_first_of(" \n"));
-
+    // TODO: create a factory class that will create the commands, map between command name and command class
     if (firstWord.compare("chprompt") == 0)
     {
         return new ChangePromptCommand(cmd_line);
@@ -38,9 +38,21 @@ Command *SmallShell::CreateCommand(const char *cmd_line)
     {
         return new JobsCommand(cmd_line);
     }
+    else if (firstWord.compare("bg") == 0)
+    {
+        return new BackgroundCommand(cmd_line);
+    }
+    else if (firstWord.compare("cd") == 0)
+    {
+        return new ChangeDirCommand(cmd_line);
+    }
+    else if (firstWord.compare("fg") == 0)
+    {
+        return new ForegroundCommand(cmd_line);
+    }
     else
     {
-        // return new ExternalCommand(cmd_line);
+        return new ExternalCommand(cmd_line);
     }
 
     return nullptr;

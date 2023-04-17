@@ -1,7 +1,7 @@
 #include "ExternalCommands.h"
 #include "SmallShell.h"
 
-ExternalCommand::ExternalCommand(const char *cmd_line) : Command(cmd_line)
+ExternalCommand::ExternalCommand(const char *cmd_line) : cmd_line(cmd_line), Command(cmd_line)
 {
     this->_executeInBackground = CommandUtils::_isBackgroundComamnd(cmd_line);
 }
@@ -12,8 +12,18 @@ void ExternalCommand::execute()
     pid = fork();
     if (pid == 0)
     {
+        // Prepare input array
+        char **arg_v = new char *[cmd_v.size() + 1];
+
+        for (int i = 0; i < cmd_v.size(); i++)
+        {
+            arg_v[i] = new char[cmd_v[i].length() + 1];
+            strcpy(arg_v[i], cmd_v[i].c_str());
+        }
+        arg_v[cmd_v.size()] = NULL;
         // Child process
-        if (execvp(cmd_v[0].c_str(), (char *const *)cmd_v.data()) < 0)
+        setpgrp();
+        if (execvp(cmd_v[0].c_str(), arg_v) == -1)
         {
             // TODO: Handle error, check required message
             perror("smash error: >");
@@ -36,6 +46,7 @@ void ExternalCommand::execute()
         else
         {
             // wait for child process to finish
+            SmallShell::getInstance().setForeground(this);
             waitpid(pid, NULL, WUNTRACED);
         }
     }
@@ -45,12 +56,25 @@ int ExternalCommand::getPid()
 {
     return pid;
 }
+
 void ExternalCommand::killProcess(){
-    // to do : implement.
+    kill(this->getPid(), SIGKILL);
     return ;
 }
 
 bool ExternalCommand::isExecuteInBackground()
 {
     return _executeInBackground;
+}
+
+void ExternalCommand::continueProcess()
+{
+    kill(this->getPid(), SIGCONT);
+    return;
+}
+
+void ExternalCommand::stopProcess()
+{
+    kill(this->getPid(), SIGSTOP);
+    return;
 }

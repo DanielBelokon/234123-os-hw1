@@ -54,5 +54,6 @@ public:
     JobEntry &getLastStoppedJob(int jobId);
     int getMaxJobIdInArray();
     JobEntry &getJobWithMaxID();
+    bool continueJob(int jobId);
     // TODO: Add extra methods or modify exisitng ones as needed
 };

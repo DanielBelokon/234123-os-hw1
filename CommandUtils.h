@@ -43,23 +43,6 @@ namespace CommandUtils
         return _rtrim(_ltrim(s));
     }
 
-    inline int _parseCommandLine(const char *cmd_line, char **args)
-    {
-        FUNC_ENTRY()
-        int i = 0;
-        std::istringstream iss(_trim(std::string(cmd_line)).c_str());
-        for (std::string s; iss >> s;)
-        {
-            args[i] = (char *)malloc(s.length() + 1);
-            std::memset(args[i], 0, s.length() + 1);
-            std::strcpy(args[i], s.c_str());
-            args[++i] = NULL;
-        }
-        return i;
-
-        FUNC_EXIT()
-    }
-
     inline bool _isBackgroundComamnd(const char *cmd_line)
     {
         const std::string str(cmd_line);
@@ -73,6 +56,25 @@ namespace CommandUtils
         {
             cmd_line = cmd_line.substr(0, cmd_line.length() - 1);
         }
+    }
+
+    inline int _parseCommandLine(const char *cmd_line, char **args)
+    {
+        FUNC_ENTRY()
+        int i = 0;
+        std::string cmd_s = std::string(cmd_line);
+        _removeBackgroundSign(cmd_s);
+        std::istringstream iss(_trim(cmd_s).c_str());
+        for (std::string s; iss >> s;)
+        {
+            args[i] = (char *)malloc(s.length() + 1);
+            std::memset(args[i], 0, s.length() + 1);
+            std::strcpy(args[i], s.c_str());
+            args[++i] = NULL;
+        }
+        return i;
+
+        FUNC_EXIT()
     }
 
     inline std::vector<std::string> _split(const std::string &s, char delim)

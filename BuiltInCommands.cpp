@@ -125,7 +125,19 @@ void ForegroundCommand::MoveJobToForeground(JobsList::JobEntry &job)
     this->getOutputStream() << job.cmd->getCommandName() << " : " << job.getJobPid() << std::endl;
     // sent job to foreground
     SmallShell::getInstance().getJobsList().removeJobById(job.getJobId());
+    SmallShell::getInstance().setForeground(job.cmd);
     kill(job.getJobPid(), SIGCONT);
     waitpid(job.getJobPid(), nullptr, WUNTRACED);
 }
 #pragma endregion
+
+#pragma region BackgroundCommand
+
+void BackgroundCommand::execute()
+{
+    JobsList &jlInstance = SmallShell::getInstance().getJobsList();
+    if (cmd_v.size() > 1)
+        jlInstance.continueJob(std::stoi(cmd_v[1]));
+    else
+        jlInstance.continueJob(jlInstance.getMaxJobIdInArray());
+}
