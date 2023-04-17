@@ -3,6 +3,7 @@
 class ExternalCommand : public Command
 {
     int pid;
+    const char *cmd_line;
     bool _executeInBackground;
 
 public:

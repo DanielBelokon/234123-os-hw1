@@ -14,7 +14,7 @@ private:
     std::string prompt = "smash> ";
     int PID = 0;
     std::string prevPath;
-    // TODO: Add foreground job and jobs list
+    ExternalCommand *foregroundJob = nullptr;
     JobsList _jobsList;
     SmallShell();
 
@@ -27,9 +27,42 @@ public:
     void executeCommand(const char *cmd_line);
     Command *CreateCommand(const char *cmd_line);
 
-    int getPid();
+    // todo: err enum
+    bool ctrlZHandler()
+    {
+        if (foregroundJob == nullptr)
+        {
+            return false;
+        }
+        foregroundJob->stopProcess();
+        _jobsList.addJob(foregroundJob, true);
+        foregroundJob = nullptr;
+        return true;
+    }
+
+    bool ctrlCHandler()
+    {
+        if (foregroundJob == nullptr)
+        {
+            return false;
+        }
+        foregroundJob->killProcess();
+        foregroundJob = nullptr;
+        return true;
+    }
+
+    bool alarmHandler() { return true; }
+
+    void setForeground(ExternalCommand *job)
+    {
+        foregroundJob = job;
+    }
+
+    int
+    getPid();
     std::string getWorkingDir();
     JobsList &getJobsList();
+
     void setPrevPath(const std::string &path)
     {
         prevPath = path;

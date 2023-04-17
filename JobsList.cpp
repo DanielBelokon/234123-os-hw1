@@ -100,7 +100,7 @@ JobsList::JobEntry &JobsList::getLastStoppedJob(int jobId)
 
 int JobsList::getMaxJobIdInArray()
 {
-    int temp = -1;
+    int temp = 0;
     for (int i = 0; i < jobs.size(); i++)
     {
         if (jobs[i].jobId > temp)
@@ -125,4 +125,11 @@ JobsList::JobEntry &JobsList::getJobWithMaxID()
             return jobs[i];
         }
     }
+}
+
+bool JobsList::continueJob(int jobId)
+{
+    getJobById(jobId).cmd->continueProcess();
+    getJobById(jobId).status = RUNNING;
+    return true;
 }
