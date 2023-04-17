@@ -50,6 +50,14 @@ Command *SmallShell::CreateCommand(const char *cmd_line)
     {
         return new ForegroundCommand(cmd_line);
     }
+    else if (firstWord.compare("quit") == 0)
+    {
+        return new QuitCommand(cmd_line);
+    }
+    else if (firstWord.compare("kill") == 0)
+    {
+        return new KillCommand(cmd_line);
+    }
     else
     {
         return new ExternalCommand(cmd_line);
@@ -81,3 +89,4 @@ JobsList &SmallShell::getJobsList()
 {
     return _jobsList;
 }
+

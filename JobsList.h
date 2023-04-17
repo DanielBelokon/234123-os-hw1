@@ -22,6 +22,7 @@ public:
             int jobPid;
             JobStatus status;
             time_t timeStarted;
+
             JobEntry(ExternalCommand *cmd, int jobId, int pid, JobStatus status) : cmd(cmd), jobId(jobId), jobPid(pid), status(status), timeStarted(time(nullptr))
             {
             }
@@ -32,6 +33,27 @@ public:
             int getJobPid()
             {
                 return jobPid;
+            }
+
+            JobStatus getStatus()
+            {
+                int st = cmd->getProcessStatus();
+                if (WIFSTOPPED(st))
+                {
+                    return STOPPED;
+                }
+                else if (WIFEXITED(st))
+                {
+                    return DONE;
+                }
+                else if (WIFSIGNALED(st))
+                {
+                    return REMOVED;
+                }
+                else
+                {
+                    return RUNNING;
+                }
             }
     };
     // TODO: Add your data members
@@ -55,5 +77,7 @@ public:
     int getMaxJobIdInArray();
     JobEntry &getJobWithMaxID();
     bool continueJob(int jobId);
+    int size();
+    int countStoppedJobs();
     // TODO: Add extra methods or modify exisitng ones as needed
 };

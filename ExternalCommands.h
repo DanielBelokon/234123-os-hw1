@@ -3,7 +3,7 @@
 class ExternalCommand : public Command
 {
     int pid;
-    const char *cmd_line;
+    std::string cmd_line;
     bool _executeInBackground;
 
 public:
@@ -18,4 +18,6 @@ public:
     void stopProcess();
     // SIGKILL process
     void killProcess();
+    std::string getCmdLine();
+    int getProcessStatus();
 };

@@ -58,7 +58,7 @@ class QuitCommand : public BuiltInCommand
 {
     // TODO: Add your data members
 public:
-    QuitCommand(const char *cmd_line);
+    QuitCommand(const char *cmd_line) : BuiltInCommand(cmd_line){};
     virtual ~QuitCommand() {}
     void execute() override;
 };
@@ -133,7 +133,7 @@ class KillCommand : public BuiltInCommand
 {
     // TODO: Add your data members
 public:
-    KillCommand(const char *cmd_line);
+    KillCommand(const char *cmd_line) : BuiltInCommand(cmd_line){};
     virtual ~KillCommand() {}
     void execute() override;
 };

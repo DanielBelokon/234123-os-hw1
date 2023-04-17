@@ -31,7 +31,7 @@ void JobsList::printJobsList(std::ostream &out)
         out << "[" << job.jobId << "]" << job.cmd->getCommandName() << " : " << job.jobPid << " ";
         time_t delta_time = difftime(time(nullptr), job.timeStarted);
         out << delta_time << " secs";
-        if (job.status == STOPPED)
+        if (job.getStatus() == STOPPED)
         {
             out << " (stopped)";
         }
@@ -41,8 +41,11 @@ void JobsList::printJobsList(std::ostream &out)
 
 void JobsList::killAllJobs()
 {
+    std::cout << "sending  SIGKILL signal to " << jobs.size() << " jobs" << std::endl;
+
     for (auto &job : jobs)
     {
+        std::cout << job.jobPid << ": " << job.cmd->getCmdLine() << std::endl;
         job.cmd->killProcess();
     }
 }
@@ -51,7 +54,7 @@ void JobsList::removeFinishedJobs()
 {
     for (int i = 0; i < jobs.size(); i++)
     {
-        if (jobs[i].status == DONE || jobs[i].status == REMOVED)
+        if (jobs[i].getStatus() == DONE || jobs[i].getStatus() == REMOVED)
         {
             jobs.erase(jobs.begin() + i);
         }
@@ -91,7 +94,7 @@ JobsList::JobEntry &JobsList::getLastStoppedJob(int jobId)
 {
     for (int i = jobs.size() - 1; i >= 0; i--)
     {
-        if (jobs[i].status == STOPPED)
+        if (jobs[i].getStatus() == STOPPED)
         {
             return jobs[i];
         }
@@ -132,4 +135,20 @@ bool JobsList::continueJob(int jobId)
     getJobById(jobId).cmd->continueProcess();
     getJobById(jobId).status = RUNNING;
     return true;
+}
+int JobsList::size()
+{
+    return jobs.size();
+}
+int JobsList::countStoppedJobs()
+{
+    int count = 0;
+    for (int i = 0; i < jobs.size(); i++)
+    {
+        if (jobs[i].getStatus() == STOPPED)
+        {
+            count++;
+        }
+    }
+    return count;
 }

@@ -110,6 +110,11 @@ void ForegroundCommand::execute()
 
     if (cmd_v.size() == 1)
     {
+        if (SmallShell::getInstance().getJobsList().size() == 0)
+        {
+            this->getOutputStream() << "smash error: fg: jobs list is empty" << std::endl;
+            return;
+        }
         JobsList::JobEntry job = SmallShell::getInstance().getJobsList().getJobWithMaxID();
         MoveJobToForeground(job);
     }
@@ -136,8 +141,82 @@ void ForegroundCommand::MoveJobToForeground(JobsList::JobEntry &job)
 void BackgroundCommand::execute()
 {
     JobsList &jlInstance = SmallShell::getInstance().getJobsList();
+    // if number of arguments is not 1 or 2
+    if (cmd_v.size() > 2)
+    {
+        this->getOutputStream() << "smash error: bg: invalid arguments" << std::endl;
+        return;
+    }
+    // if bg alone is called and there are no jobs in the list (STOPPED)
+    if (cmd_v.size() == 1 && jlInstance.countStoppedJobs() == 0)
+    {
+        this->getOutputStream() << "smash error: bg: there is no stopped jobs to resume" << std::endl;
+        return;
+    }
+    int jobId = std::stoi(cmd_v[1]);
+
+    if (cmd_v.size() == 2 && jlInstance.getJobById(jobId).getStatus() == 0)
+    {
+        this->getOutputStream() << "smash error: bg: job-id <job-id> is already running in the background " << std::endl;
+        return;
+    }
+    // if the job does not exist
+    if (cmd_v.size() == 2 && jlInstance.getJobById(jobId).getJobId() == -1)
+    {
+        this->getOutputStream() << "smash error: bg: job-id " << cmd_v[1] << " does not exist" << std::endl;
+        return;
+    }
+
     if (cmd_v.size() > 1)
-        jlInstance.continueJob(std::stoi(cmd_v[1]));
+        jlInstance.continueJob(jobId);
     else
         jlInstance.continueJob(jlInstance.getMaxJobIdInArray());
 }
+
+#pragma endregion BackgroundCommand
+
+#pragma region QuitCommand
+
+void QuitCommand::execute()
+{
+    if (cmd_v.size() > 1 && cmd_v[1] == "kill")
+    {
+        SmallShell::getInstance().getJobsList().killAllJobs();
+    }
+
+    SmallShell::getInstance().setRunning(false);
+}
+
+#pragma endregion QuitCommand
+
+#pragma region KillCommand
+
+void KillCommand::execute()
+{
+    if (cmd_v.size() != 3)
+    {
+        this->getOutputStream() << "smash error: kill: invalid arguments" << std::endl;
+        return;
+    }
+
+    int signal = -atoi(cmd_v[1].c_str());
+    int jobId = atoi(cmd_v[2].c_str());
+
+    JobsList::JobEntry job = SmallShell::getInstance().getJobsList().getJobById(jobId);
+    if (job.getJobId() == -1)
+    {
+        this->getOutputStream() << "smash error: kill: job-id " << jobId << " does not exist" << std::endl;
+        return;
+    }
+
+    if (kill(job.getJobPid(), signal) < 0)
+    {
+        perror("smash error: kill failed");
+    }
+    else
+    {
+        this->getOutputStream() << "signal number " << signal << " was sent to pid " << job.getJobPid() << std::endl;
+    }
+}
+
+#pragma endregion KillCommand

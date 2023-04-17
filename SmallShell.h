@@ -16,6 +16,7 @@ private:
     std::string prevPath;
     ExternalCommand *foregroundJob = nullptr;
     JobsList _jobsList;
+    bool running = true;
     SmallShell();
 
 public:
@@ -88,5 +89,15 @@ public:
         static SmallShell instance; // Guaranteed to be destroyed.
         // Instantiated on first use.
         return instance;
+    }
+
+    bool isRunning() const
+    {
+        return running;
+    }
+
+    void setRunning(bool running)
+    {
+        this->running = running;
     }
 };

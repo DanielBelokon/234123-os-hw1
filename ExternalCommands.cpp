@@ -78,3 +78,14 @@ void ExternalCommand::stopProcess()
     kill(this->getPid(), SIGSTOP);
     return;
 }
+std::string ExternalCommand::getCmdLine()
+{
+    return std::string(cmd_line);
+}
+
+int ExternalCommand::getProcessStatus()
+{
+    int status;
+    waitpid(this->getPid(), &status, WNOHANG);
+    return status;
+}
