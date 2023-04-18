@@ -164,12 +164,13 @@ TEST(CdTests, EmptyString)
 // Test jobs command
 TEST(JobsTests, BasicList)
 {
-    ExternalCommand *command1 = new ExternalCommand("sleep 1");
-    ExternalCommand *command2 = new ExternalCommand("sleep 2");
-    ExternalCommand *command3 = new ExternalCommand("sleep 3");
-    SmallShell::getInstance().getJobsList().addJob(command1, false);
-    SmallShell::getInstance().getJobsList().addJob(command2, false);
-    SmallShell::getInstance().getJobsList().addJob(command3, false);
+    ExternalCommand *command1 = new ExternalCommand("sleep 5 &");
+    ExternalCommand *command2 = new ExternalCommand("sleep 5 &");
+    ExternalCommand *command3 = new ExternalCommand("sleep 5 &");
+
+    command1->execute();
+    command2->execute();
+    command3->execute();
 
     JobsCommand command = JobsCommand("jobs");
     std::ostringstream out;
@@ -180,6 +181,7 @@ TEST(JobsTests, BasicList)
 
     std::string actual = out.str();
     std::string expected;
+    // TODO: print the actual command received or the name?
     expected += "[1]sleep : " + std::to_string(command1->getPid()) + " 0 secs\n";
     expected += "[2]sleep : " + std::to_string(command2->getPid()) + " 0 secs\n";
     expected += "[3]sleep : " + std::to_string(command3->getPid()) + " 0 secs\n";
@@ -220,6 +222,7 @@ TEST(FgTests, BasicForeground)
     expected += "sleep : " + std::to_string(command1->getPid()) + "\n";
 
     EXPECT_EQ(expected, actual);
+    SmallShell::getInstance().getJobsList().killAllJobs();
 }
 
 TEST(FgTests, ForegroundId)
@@ -270,4 +273,52 @@ TEST(FgTests, InvalidId)
     command.execute();
 
     EXPECT_EQ(out.str(), "smash error: fg: job-id 1 does not exist\n");
+}
+
+TEST(FgTests, TooManyArgs)
+{
+    ForegroundCommand command = ForegroundCommand("fg 1 2 3");
+    std::ostringstream out;
+    command.setOutputStream(&out);
+    command.execute();
+
+    EXPECT_EQ(out.str(), "smash error: fg: invalid arguments\n");
+}
+
+// Test bg command
+
+// TODO: test bg with stopped job
+
+// Test quit command
+
+TEST(QuitTests, BasicQuit)
+{
+    QuitCommand command = QuitCommand("quit");
+    std::ostringstream out;
+    command.setOutputStream(&out);
+    command.execute();
+
+    EXPECT_EQ(out.str(), "");
+}
+
+TEST(QuitTests, IgnoreArgs)
+{
+    QuitCommand command = QuitCommand("quit arg1 arg2 arg3");
+    std::ostringstream out;
+    command.setOutputStream(&out);
+    command.execute();
+    EXPECT_EQ(out.str(), "");
+}
+
+TEST(QuitTests, QuitKill)
+{
+    ExternalCommand *command1 = new ExternalCommand("sleep 2 &");
+    command1->execute();
+
+    QuitCommand command = QuitCommand("quit");
+    std::ostringstream out;
+    command.setOutputStream(&out);
+    command.execute();
+
+    EXPECT_EQ(out.str(), "smash: sending SIGKILL signal to 1 jobs:\n[1]sleep : " + std::to_string(command1->getPid()) + "\n");
 }
