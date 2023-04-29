@@ -63,10 +63,10 @@
         "ratio": "cpp",
         "mutex": "cpp",
         "thread": "cpp",
-        "variant": "cpp",
-        "cinttypes": "cpp"
+        "variant": "cpp"
     },
     "cmake.buildDirectory": "${workspaceFolder}/build",
+    "sonarlint.pathToCompileCommands": "${workspaceFolder}/build/linux-debug/compile_commands.json",
     "C_Cpp.default.compilerPath": "g++",
     "C_Cpp.default.cppStandard": "c++14",
     "C_Cpp.inlayHints.autoDeclarationTypes.enabled": true,
