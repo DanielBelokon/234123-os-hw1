@@ -28,14 +28,14 @@ void JobsList::printJobsList(std::ostream &out)
 
     for (auto &job : jobs)
     {
-        out << "[" << job.jobId << "]" << job.cmd->getCommandName() << " : " << job.jobPid << " ";
+        std::cout << "[" << job.jobId << "]" << job.cmd->getCommandName() << " : " << job.jobPid << " ";
         time_t delta_time = difftime(time(nullptr), job.timeStarted);
-        out << delta_time << " secs";
+        std::cout << delta_time << " secs";
         if (job.getStatus() == STOPPED)
         {
-            out << " (stopped)";
+            std::cout << " (stopped)";
         }
-        out << std::endl;
+        std::cout << std::endl;
     }
 }
 

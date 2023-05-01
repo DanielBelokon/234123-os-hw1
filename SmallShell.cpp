@@ -107,7 +107,7 @@ void SmallShell::executeCommand(const char *cmd_line)
     cmd->setIODescriptors();
     cmd->execute();
     cmd->cleanup();
-    delete cmd;
+    // delete cmd;
     // Please note that you must fork smash process for some commands (e.g., external commands....)
 }
 
