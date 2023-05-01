@@ -178,6 +178,7 @@ TEST(JobsTests, BasicList)
     expected += "[3]sleep : " + std::to_string(command3->getPid()) + " 0 secs\n";
 
     EXPECT_EQ(expected, actual);
+    SmallShell::getInstance().getJobsList().killAllJobs();
 }
 
 TEST(JobsTests, IgnoreArgs)
@@ -197,7 +198,6 @@ TEST(JobsTests, IgnoreArgs)
 
 TEST(FgTests, BasicForeground)
 {
-    SmallShell::getInstance().getJobsList().killAllJobs();
     ExternalCommand *command1 = new ExternalCommand("sleep 2 &");
     command1->execute();
 
@@ -214,11 +214,11 @@ TEST(FgTests, BasicForeground)
     expected += "sleep : " + std::to_string(command1->getPid()) + "\n";
 
     EXPECT_EQ(expected, actual);
+    SmallShell::getInstance().getJobsList().killAllJobs();
 }
 
 TEST(FgTests, ForegroundId)
 {
-    SmallShell::getInstance().getJobsList().killAllJobs();
     ExternalCommand *command1 = new ExternalCommand("sleep 2 &");
     command1->execute();
 
@@ -235,6 +235,7 @@ TEST(FgTests, ForegroundId)
     expected += "sleep : " + std::to_string(command1->getPid()) + "\n";
 
     EXPECT_EQ(expected, actual);
+    SmallShell::getInstance().getJobsList().killAllJobs();
 }
 
 TEST(FgTests, StoppedJob)
@@ -256,11 +257,11 @@ TEST(FgTests, StoppedJob)
     expected += "sleep : " + std::to_string(command1->getPid()) + "\n";
 
     EXPECT_EQ(expected, actual);
+    SmallShell::getInstance().getJobsList().killAllJobs();
 }
 
 TEST(FgTests, InvalidId)
 {
-    SmallShell::getInstance().getJobsList().killAllJobs();
     ForegroundCommand command = ForegroundCommand("fg 1");
     testing::internal::CaptureStderr();
     command.execute();
@@ -270,7 +271,6 @@ TEST(FgTests, InvalidId)
 
 TEST(FgTests, TooManyArgs)
 {
-    SmallShell::getInstance().getJobsList().killAllJobs();
     ForegroundCommand command = ForegroundCommand("fg 1 2 3");
     testing::internal::CaptureStderr();
     command.execute();
