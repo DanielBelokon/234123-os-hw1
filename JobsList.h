@@ -46,10 +46,6 @@ public:
                 {
                     return DONE;
                 }
-                else if (WIFSIGNALED(st))
-                {
-                    return REMOVED;
-                }
                 else
                 {
                     return RUNNING;
@@ -72,8 +68,8 @@ public:
     void updateMaxJobId();
     JobEntry &getJobById(int jobId);
     void removeJobById(int jobId);
-    JobEntry &getLastJob(int lastJobId);
-    JobEntry &getLastStoppedJob(int jobId);
+    JobEntry &getLastJob();
+    JobEntry &getLastStoppedJob();
     int getMaxJobIdInArray();
     JobEntry &getJobWithMaxID();
     bool continueJob(int jobId);

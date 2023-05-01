@@ -3,14 +3,20 @@
 #include "Commands.h"
 #include "SmallShell.h"
 #include "JobsList.h"
+#include <iostream>
 #include <string>
+#include <fstream>
 
 class BuiltInCommand : public Command
 {
 
 public:
+    std::string output_file;
+
     BuiltInCommand(const char *cmd_line) : Command(cmd_line)
     {
+        // handle > redirection
+        std::string cmd_str = std::string(cmd_line);
     }
     virtual ~BuiltInCommand() {}
 };
