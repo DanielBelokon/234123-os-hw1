@@ -31,14 +31,14 @@ void ExternalCommand::execute()
         if (execvp(cmd_v[0].c_str(), arg_v) == -1)
         {
             // TODO: Handle error, check required message
-            perror("smash error: >");
+            perror("smash error: execvp:");
             exit(1);
         }
     }
     else if (pid < 0)
     {
         // TODO: Handle error, check required message
-        perror("smash error: >");
+        perror("smash error: fork: ");
     }
     // Parent process
     else

@@ -19,7 +19,7 @@ Command *SmallShell::CreateCommand(const char *cmd_line)
     // For example:
 
     std::string cmd_s = _trim(std::string(cmd_line));
-    std::vector<std::string> cmd_v = _split(cmd_s, ' ');
+    std::vector<std::string> cmd_v = _split(cmd_s);
     std::string firstWord = cmd_s.substr(0, cmd_s.find_first_of(" \n"));
     // TODO: create a factory class that will create the commands, map between command name and command class
     if (firstWord.compare("chprompt") == 0)
@@ -58,7 +58,13 @@ Command *SmallShell::CreateCommand(const char *cmd_line)
     {
         return new KillCommand(cmd_line);
     }
-
+    else if (cmd_s.find('*') != std::string::npos || cmd_s.find('?') != std::string::npos)
+    {
+        std::string bash_cmd = "bash -c \"";
+        bash_cmd += cmd_s;
+        bash_cmd += "\"";
+        return new ExternalCommand(bash_cmd.c_str());
+    }
     else
     {
         return new ExternalCommand(cmd_line);
