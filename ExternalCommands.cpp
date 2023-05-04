@@ -43,15 +43,12 @@ void ExternalCommand::execute()
     // Parent process
     else
     {
-        if (this->_executeInBackground)
-        {
-            // add to jobs list
-            SmallShell::getInstance().getJobsList().addJob(this);
-        }
-        else
+        // add to jobs list
+        auto jobEntry = SmallShell::getInstance().getJobsList().addJob(this);
+        if (!this->_executeInBackground)
         {
             // wait for child process to finish
-            SmallShell::getInstance().setForeground(this);
+            SmallShell::getInstance().setForeground(jobEntry);
             waitpid(pid, NULL, WUNTRACED);
         }
     }

@@ -138,8 +138,7 @@ void ForegroundCommand::MoveJobToForeground(JobsList::JobEntry &job)
     // print the command with PID
     std::cout << job.cmd->getCommandName() << " : " << job.getJobPid() << std::endl;
     // sent job to foreground
-    SmallShell::getInstance().getJobsList().removeJobById(job.getJobId());
-    SmallShell::getInstance().setForeground(job.cmd);
+    SmallShell::getInstance().setForeground(job.getJobId());
     kill(job.getJobPid(), SIGCONT);
     waitpid(job.getJobPid(), nullptr, WUNTRACED);
 }

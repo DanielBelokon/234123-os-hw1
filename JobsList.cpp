@@ -13,13 +13,14 @@ std::vector<JobsList::JobEntry> &JobsList::getJobsVectorList()
 {
     return jobs;
 }
-void JobsList::addJob(ExternalCommand *cmd, bool isStopped)
+int JobsList::addJob(ExternalCommand *cmd, bool isStopped)
 {
     // maybe we need to execute the command first ? and get the pid from the execute ?
     //pid_t pid = (int)cmd->execute(); // Note : execute is void , maybe need to change.
     pid_t pid = cmd->getPid();
     JobEntry job = JobEntry(cmd, ++maxJobId, pid, isStopped ? STOPPED : RUNNING);
     jobs.push_back(job);
+    return job.jobId;
 }
 
 void JobsList::printJobsList(std::ostream &out)

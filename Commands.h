@@ -28,10 +28,8 @@ public:
   int oldStderr;
   int oldStdin;
 
-protected:
   std::vector<std::string> cmd_v;
 
-public:
   Command(const char *cmd_line)
   {
     std::string cmd_line_s = cmd_line;
