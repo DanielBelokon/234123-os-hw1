@@ -19,5 +19,5 @@ public:
     // SIGKILL process
     void killProcess();
     std::string getCmdLine();
-    int getProcessStatus();
+    int getProcessStatus(pid_t &retPid);
 };

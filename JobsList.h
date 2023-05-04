@@ -16,41 +16,64 @@ class JobsList
 public:
     class JobEntry
     {
-        public:
-            ExternalCommand *cmd;
-            int jobId;
-            int jobPid;
-            JobStatus status;
-            time_t timeStarted;
+    public:
+        ExternalCommand *cmd;
+        int jobId;
+        int jobPid;
+        JobStatus status;
+        time_t timeStarted;
 
-            JobEntry(ExternalCommand *cmd, int jobId, int pid, JobStatus status) : cmd(cmd), jobId(jobId), jobPid(pid), status(status), timeStarted(time(nullptr))
+        JobEntry(ExternalCommand *cmd, int jobId, int pid, JobStatus status) : cmd(cmd), jobId(jobId), jobPid(pid), status(status), timeStarted(time(nullptr))
+        {
+        }
+        int getJobId()
+        {
+            return jobId;
+        }
+        int getJobPid()
+        {
+            return jobPid;
+        }
+
+        JobStatus getStatus()
+        {
+
+            pid_t wpid;
+            int st = cmd->getProcessStatus(wpid);
+
+            if (wpid == -1)
             {
-            }
-            int getJobId()
-            {
-                return jobId;
-            }
-            int getJobPid()
-            {
-                return jobPid;
+                perror("waitpid");
+                // exit(EXIT_FAILURE);
             }
 
-            JobStatus getStatus()
+            if (wpid == 0)
             {
-                int st = cmd->getProcessStatus();
-                if (WIFSTOPPED(st))
-                {
-                    return STOPPED;
-                }
-                else if (WIFEXITED(st))
-                {
-                    return DONE;
-                }
-                else
-                {
-                    return RUNNING;
-                }
+                return status;
             }
+
+            if (WIFEXITED(st) || WIFSIGNALED(st))
+            {
+                printf("child exited, status=%d\n", WEXITSTATUS(st));
+                status = DONE;
+            }
+            else if (WIFSTOPPED(st))
+            {
+                printf("child stopped (signal %d)\n", WSTOPSIG(st));
+                status = STOPPED;
+            }
+            else if (WIFCONTINUED(st))
+            {
+                printf("child continued\n");
+                status = RUNNING;
+            }
+            else
+            { /* Non-standard case -- may never happen */
+                printf("Unexpected status (0x%x)\n", status);
+            }
+
+            return status;
+        }
     };
     // TODO: Add your data members
 private:

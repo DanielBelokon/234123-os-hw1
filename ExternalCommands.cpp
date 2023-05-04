@@ -80,7 +80,7 @@ void ExternalCommand::continueProcess()
 
 void ExternalCommand::stopProcess()
 {
-    kill(this->getPid(), SIGSTOP);
+    kill(this->getPid(), SIGTSTP);
     return;
 }
 std::string ExternalCommand::getCmdLine()
@@ -88,9 +88,9 @@ std::string ExternalCommand::getCmdLine()
     return std::string(cmd_line);
 }
 
-int ExternalCommand::getProcessStatus()
+int ExternalCommand::getProcessStatus(pid_t &retPid)
 {
     int status;
-    waitpid(this->getPid(), &status, WNOHANG);
+    retPid = waitpid(this->getPid(), &status, WUNTRACED | WNOHANG | WCONTINUED);
     return status;
 }

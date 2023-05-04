@@ -54,7 +54,8 @@ void JobsList::removeFinishedJobs()
 {
     for (int i = 0; i < jobs.size(); i++)
     {
-        if (jobs[i].getStatus() == DONE || jobs[i].getStatus() == REMOVED)
+        JobStatus status = jobs[i].getStatus();
+        if (status == DONE || status == REMOVED)
         {
             jobs.erase(jobs.begin() + i);
         }

@@ -1,46 +1,68 @@
 {
-    "version": 6,
+    "version": 3,
     "configurePresets": [
-      {
-        "name": "linux-debug",
-        "displayName": "Linux Debug",
-        "cacheVariables": {
-          "CMAKE_BUILD_TYPE": "Debug",
-          "CMAKE_C_COMPILER": "gcc",
-          "CMAKE_CXX_COMPILER": "g++"
+        {
+            "name": "linux-debug",
+          "displayName": "Linux Debug",
+            "generator": "Unix Makefiles",
+          "cacheVariables": {
+            "CMAKE_BUILD_TYPE": "Debug",
+            "CMAKE_C_COMPILER": "gcc",
+            "CMAKE_CXX_COMPILER": "g++"
+          },
+            "binaryDir": "${sourceDir}/build/linux-debug"
         },
-        "binaryDir": "${sourceDir}/build/linux-debug"
-      }
+        {
+            "name": "linux-release",
+            "description": "linux-release",
+            "displayName": "linux-release",
+            "inherits": [
+                "linux-debug"
+            ],
+            "cacheVariables": {
+                "CMAKE_BUILD_TYPE": "Release",
+                "CMAKE_C_COMPILER": "gcc",
+                "CMAKE_CXX_COMPILER": "g++",
+                "CMAKE_CXX_FLAGS": "-O3 -Wall -Wextra"
+            },
+            "binaryDir": "${sourceDir}/build/linux-release"
+        }
     ],
     "buildPresets": [
-      {
-        "name": "default",
-        "displayName": "Default Build",
-        "configurePreset": "linux-debug",
-        "jobs": 8
-      },
-      {
-        "name": "clean-build",
-        "displayName": "Clean Build",
-        "configurePreset": "linux-debug",
-        "jobs": 8,
-        "cleanFirst": true
-      }
+        {
+            "name": "default",
+            "displayName": "Default Build",
+            "configurePreset": "linux-debug",
+            "jobs": 8
+        },
+        {
+            "name": "release",
+            "displayName": "Release build",
+            "configurePreset": "linux-release",
+            "jobs": 8
+        },
+        {
+            "name": "clean-build",
+            "displayName": "Clean Build",
+            "configurePreset": "linux-debug",
+            "jobs": 8,
+            "cleanFirst": true
+        }
     ],
     "testPresets": [
-      {
-        "name": "default",
-        "displayName": "Default Test",
-        "configurePreset": "linux-debug",
-        "configuration": "default",
-        "output": {
-          "outputOnFailure": true
-        },
-        "execution": {
-          "jobs": 8,
-          "noTestsAction": "error",
-          "stopOnFailure": true
+        {
+            "name": "default",
+            "displayName": "Default Test",
+            "configurePreset": "linux-debug",
+            "configuration": "default",
+            "output": {
+                "outputOnFailure": true
+            },
+            "execution": {
+                "jobs": 8,
+                "noTestsAction": "error",
+                "stopOnFailure": true
+            }
         }
-      }
     ]
 }
