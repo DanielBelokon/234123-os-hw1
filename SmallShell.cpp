@@ -58,6 +58,7 @@ Command *SmallShell::CreateCommand(const char *cmd_line)
     {
         return new KillCommand(cmd_line);
     }
+
     else
     {
         return new ExternalCommand(cmd_line);
@@ -69,9 +70,44 @@ Command *SmallShell::CreateCommand(const char *cmd_line)
 void SmallShell::executeCommand(const char *cmd_line)
 {
     // TODO: Add your implementation here
-    // for example:
+    std::string cmd_s = _trim(std::string(cmd_line));
+    // handle pipe
+
+    if (cmd_s.find("|") != std::string::npos)
+    {
+        std::vector<std::string> cmd_v = _split(cmd_s, '|');
+        std::vector<Command *> commands;
+        std::vector<bool> RedirectErrVector = {};
+        for (std::string cmd : cmd_v)
+        {
+            bool redirectError = false;
+            // remove spaces
+            cmd = _trim(cmd);
+            if (cmd.empty())
+            {
+                continue;
+            }
+
+            if (cmd[0] == '&')
+            {
+                cmd = cmd.substr(1);
+                cmd = _trim(cmd);
+                redirectError = true;
+            }
+            commands.push_back(CreateCommand(cmd.c_str()));
+            RedirectErrVector.push_back(redirectError);
+        }
+
+        PipeCommand pipeCommand = PipeCommand(cmd_line, commands, RedirectErrVector);
+        pipeCommand.execute();
+        return;
+    }
+
     Command *cmd = CreateCommand(cmd_line);
+    cmd->setIODescriptors();
     cmd->execute();
+    cmd->cleanup();
+    // delete cmd;
     // Please note that you must fork smash process for some commands (e.g., external commands....)
 }
 

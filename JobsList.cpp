@@ -28,20 +28,20 @@ void JobsList::printJobsList(std::ostream &out)
 
     for (auto &job : jobs)
     {
-        out << "[" << job.jobId << "]" << job.cmd->getCommandName() << " : " << job.jobPid << " ";
+        std::cout << "[" << job.jobId << "]" << job.cmd->getCommandName() << " : " << job.jobPid << " ";
         time_t delta_time = difftime(time(nullptr), job.timeStarted);
-        out << delta_time << " secs";
+        std::cout << delta_time << " secs";
         if (job.getStatus() == STOPPED)
         {
-            out << " (stopped)";
+            std::cout << " (stopped)";
         }
-        out << std::endl;
+        std::cout << std::endl;
     }
 }
 
 void JobsList::killAllJobs()
 {
-    std::cout << "sending  SIGKILL signal to " << jobs.size() << " jobs" << std::endl;
+    std::cout << "smash: sending SIGKILL signal to " << jobs.size() << " jobs:" << std::endl;
 
     for (auto &job : jobs)
     {
@@ -54,7 +54,8 @@ void JobsList::removeFinishedJobs()
 {
     for (int i = 0; i < jobs.size(); i++)
     {
-        if (jobs[i].getStatus() == DONE || jobs[i].getStatus() == REMOVED)
+        JobStatus status = jobs[i].getStatus();
+        if (status == DONE || status == REMOVED)
         {
             jobs.erase(jobs.begin() + i);
         }
@@ -71,7 +72,8 @@ JobsList::JobEntry &JobsList::getJobById(int jobId)
             return jobs[i];
         }
     }
-    // return NULL;
+
+    throw std::invalid_argument("Job not found");
 }
 
 void JobsList::removeJobById(int jobId)
@@ -81,16 +83,19 @@ void JobsList::removeJobById(int jobId)
         if (jobs[i].jobId == jobId)
         {
             jobs.erase(jobs.begin() + i);
+            return;
         }
     }
+
+    throw std::invalid_argument("Job not found");
 }
 
-JobsList::JobEntry &JobsList::getLastJob(int lastJobId)
+JobsList::JobEntry &JobsList::getLastJob()
 {
     return jobs[jobs.size() - 1];
 }
 
-JobsList::JobEntry &JobsList::getLastStoppedJob(int jobId)
+JobsList::JobEntry &JobsList::getLastStoppedJob()
 {
     for (int i = jobs.size() - 1; i >= 0; i--)
     {
@@ -99,6 +104,8 @@ JobsList::JobEntry &JobsList::getLastStoppedJob(int jobId)
             return jobs[i];
         }
     }
+
+    throw std::invalid_argument("No stopped jobs");
 }
 
 int JobsList::getMaxJobIdInArray()
@@ -128,6 +135,8 @@ JobsList::JobEntry &JobsList::getJobWithMaxID()
             return jobs[i];
         }
     }
+
+    throw std::invalid_argument("Job not found");
 }
 
 bool JobsList::continueJob(int jobId)
@@ -136,10 +145,12 @@ bool JobsList::continueJob(int jobId)
     getJobById(jobId).status = RUNNING;
     return true;
 }
+
 int JobsList::size()
 {
     return jobs.size();
 }
+
 int JobsList::countStoppedJobs()
 {
     int count = 0;

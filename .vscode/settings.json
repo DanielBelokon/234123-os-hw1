@@ -1,6 +1,6 @@
 {
     "files.associations": {
-        ".h": "c",
+        ".h": "cpp",
         "*.js": "javascript",
         "*.h": "cpp",
         "*.asm": "gas",
@@ -65,5 +65,13 @@
         "thread": "cpp",
         "variant": "cpp"
     },
-    "cmake.buildDirectory": "${workspaceFolder}/build"
+    "cmake.buildDirectory": "${workspaceFolder}/build",
+    "sonarlint.pathToCompileCommands": "${workspaceFolder}/build/linux-debug/compile_commands.json",
+    "C_Cpp.default.compilerPath": "g++",
+    "C_Cpp.default.cppStandard": "c++14",
+    "C_Cpp.inlayHints.autoDeclarationTypes.enabled": true,
+    "C_Cpp.inlayHints.parameterNames.enabled": true,
+    "C_Cpp.inlayHints.autoDeclarationTypes.showOnLeft": true,
+    "C_Cpp.workspaceParsingPriority": "high",
+    "C_Cpp.loggingLevel": "Warning"
 }

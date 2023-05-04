@@ -1,5 +1,8 @@
 #include "ExternalCommands.h"
 #include "SmallShell.h"
+#include <stdio.h>
+#include <unistd.h>
+#include <fcntl.h>
 
 ExternalCommand::ExternalCommand(const char *cmd_line) : cmd_line(cmd_line), Command(cmd_line)
 {
@@ -21,8 +24,10 @@ void ExternalCommand::execute()
             strcpy(arg_v[i], cmd_v[i].c_str());
         }
         arg_v[cmd_v.size()] = NULL;
+
         // Child process
         setpgrp();
+
         if (execvp(cmd_v[0].c_str(), arg_v) == -1)
         {
             // TODO: Handle error, check required message
@@ -75,7 +80,7 @@ void ExternalCommand::continueProcess()
 
 void ExternalCommand::stopProcess()
 {
-    kill(this->getPid(), SIGSTOP);
+    kill(this->getPid(), SIGTSTP);
     return;
 }
 std::string ExternalCommand::getCmdLine()
@@ -83,9 +88,9 @@ std::string ExternalCommand::getCmdLine()
     return std::string(cmd_line);
 }
 
-int ExternalCommand::getProcessStatus()
+int ExternalCommand::getProcessStatus(pid_t &retPid)
 {
     int status;
-    waitpid(this->getPid(), &status, WNOHANG);
+    retPid = waitpid(this->getPid(), &status, WUNTRACED | WNOHANG | WCONTINUED);
     return status;
 }
