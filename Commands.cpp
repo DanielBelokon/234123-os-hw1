@@ -86,3 +86,52 @@ void PipeCommand::execute()
         commands[i]->cleanup();
     }
 }
+
+
+
+GetFileInfoCommand::GetFileInfoCommand(const char *cmd_line) : Command(cmd_line){};	
+
+
+void GetFileInfoCommand::execute()
+{
+    if(cmd_v.size() != 2)
+    {
+        perror("smash error: gettype: invalid arguments");
+        return;
+    }
+    std::string pathToFile = cmd_v[1];
+    struct stat fileStat;
+    //print the type: regular file
+    // • directory
+    // • character device
+    // • block device
+    // • FIFO
+    // • symbolic link
+    // • socket
+    stat(pathToFile.c_str(), &fileStat);
+    std::cout << pathToFile<< "'s type is " ;
+
+    switch (fileStat.st_mode & S_IFMT)
+    {
+    case S_IFBLK:
+        std::cout << "\"block device\"";
+        break;
+    case S_IFCHR:
+        std::cout << "\"character device\"";
+        break;
+    case S_IFDIR:
+        std::cout << "\"directory\"";
+        break;
+    case S_IFIFO:
+        std::cout << "\"FIFO/pipe\"";
+        break;
+    case S_IFLNK:
+        std::cout << "\"symlink\"";
+        break;
+    case S_IFREG:
+        std::cout << "\"regular file\"";
+        break;
+    //print : <path-to-file>’s type is “<file type>” and takes up <X> bytes
+    }
+    std::cout<< " and takes up " << fileStat.st_size << " bytes" << std::endl;
+}
