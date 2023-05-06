@@ -378,3 +378,14 @@ TEST(PipeTests, AmpersandErrPipe)
 
     EXPECT_EQ(actual, "smash error: fg: invalid arguments\n");
 }
+//test for getfiletype
+TEST(FileTypeTests, BasicFileType)
+{
+    //for each file type
+    SmallShell::getInstance().executeCommand("getfiletype CMackeChace.txt");
+    std::string actual = testing::internal::GetCapturedStderr();
+
+    std::string expected = "CMakeCache.txt's type is \"regular file\" and takes up 23468 bytes";
+    EXPECT_EQ(actual, expected);
+
+}
