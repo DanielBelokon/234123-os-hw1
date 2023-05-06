@@ -8,6 +8,7 @@
 #include <sys/wait.h>
 #include <unistd.h>
 #include <fcntl.h>
+#include <sys/stat.h>
 
 #define COMMAND_ARGS_MAX_LENGTH (200)
 #define COMMAND_MAX_ARGS (20)
@@ -107,6 +108,14 @@ class RedirectionCommand : public Command
 public:
   explicit RedirectionCommand(const char *cmd_line);
   virtual ~RedirectionCommand() {}
+  void execute() override;
+};
+
+class GetFileInfoCommand : public Command
+{
+  public:
+  explicit GetFileInfoCommand(const char *cmd_line);
+  virtual ~GetFileInfoCommand() {}
   void execute() override;
 };
 
