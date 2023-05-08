@@ -8,13 +8,16 @@
 #include <linux/limits.h>
 #include "CommandUtils.h"
 #include "JobsList.h"
+
+#define NO_JOB -1
+
 class SmallShell
 {
 private:
     std::string prompt = "smash> ";
     int PID = 0;
     std::string prevPath;
-    ExternalCommand *foregroundJob = nullptr;
+    int foregroundJob = NO_JOB;
     JobsList _jobsList;
     bool running = true;
     SmallShell();
@@ -31,30 +34,33 @@ public:
     // todo: err enum
     bool ctrlZHandler()
     {
-        if (foregroundJob == nullptr)
+        if (foregroundJob == NO_JOB)
         {
             return false;
         }
-        foregroundJob->stopProcess();
-        _jobsList.addJob(foregroundJob, true);
-        foregroundJob = nullptr;
+        auto &job = SmallShell::getInstance().getJobsList().getJobById(foregroundJob);
+        job.cmd->stopProcess();
+        job.timeStarted = time(nullptr);
+
+        foregroundJob = NO_JOB;
         return true;
     }
 
     bool ctrlCHandler()
     {
-        if (foregroundJob == nullptr)
+        if (foregroundJob == NO_JOB)
         {
             return false;
         }
-        foregroundJob->killProcess();
-        foregroundJob = nullptr;
+        auto &job = SmallShell::getInstance().getJobsList().getJobById(foregroundJob);
+        job.cmd->killProcess();
+        foregroundJob = NO_JOB;
         return true;
     }
 
     bool alarmHandler() { return true; }
 
-    void setForeground(ExternalCommand *job)
+    void setForeground(int job)
     {
         foregroundJob = job;
     }
