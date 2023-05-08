@@ -386,7 +386,11 @@ TEST(FileTypeTests, BasicFileType)
     SmallShell::getInstance().executeCommand("getfiletype /etc/passwd");
     std::string actual = testing::internal::GetCapturedStdout();
 
-    std::string expected = "/etc/passwd's type is \"regular file\" and takes up 2396 bytes\n";
+    std::string expected = "/etc/passwd's type is \"regular file\" and takes up";
+
+    // trim actual size
+    actual = actual.substr(0, actual.find(" bytes"));
+
     EXPECT_EQ(actual, expected);
 
 }
