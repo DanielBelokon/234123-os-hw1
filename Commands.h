@@ -28,15 +28,13 @@ public:
   int oldStderr;
   int oldStdin;
 
-protected:
   std::vector<std::string> cmd_v;
 
-public:
   Command(const char *cmd_line)
   {
     std::string cmd_line_s = cmd_line;
     CommandUtils::_removeBackgroundSign(cmd_line_s);
-    cmd_v = CommandUtils::_split(cmd_line_s, ' ');
+    cmd_v = CommandUtils::_split(cmd_line_s);
 
     // handle > redirection
     std::string cmd_str = std::string(cmd_line);

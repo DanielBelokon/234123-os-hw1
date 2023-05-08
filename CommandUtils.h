@@ -8,6 +8,7 @@
 #include <sys/wait.h>
 #include <iomanip>
 #include <cstring>
+#include <sstream>
 
 const std::string WHITESPACE = " \n\r\t\f\v";
 
@@ -87,5 +88,19 @@ namespace CommandUtils
             elems.push_back(item);
         }
         return elems;
+    }
+
+    inline std::vector<std::string> _split(const std::string &s)
+    {
+        std::vector<std::string> words;
+        std::istringstream iss(s);
+        std::string word;
+
+        while (iss >> std::quoted(word))
+        {
+            words.push_back(word);
+        }
+
+        return words;
     }
 }
