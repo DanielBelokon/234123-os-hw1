@@ -43,7 +43,7 @@ public:
 
             if (wpid == -1)
             {
-                perror("waitpid");
+                perror("smash: waitpid:");
                 // exit(EXIT_FAILURE);
             }
 
@@ -54,22 +54,22 @@ public:
 
             if (WIFEXITED(st) || WIFSIGNALED(st))
             {
-                printf("child exited, status=%d\n", WEXITSTATUS(st));
+                // printf("child exited, status=%d\n", WEXITSTATUS(st));
                 status = DONE;
             }
             else if (WIFSTOPPED(st))
             {
-                printf("child stopped (signal %d)\n", WSTOPSIG(st));
+                // printf("child stopped (signal %d)\n", WSTOPSIG(st));
                 status = STOPPED;
             }
             else if (WIFCONTINUED(st))
             {
-                printf("child continued\n");
+                // printf("child continued\n");
                 status = RUNNING;
             }
             else
             { /* Non-standard case -- may never happen */
-                printf("Unexpected status (0x%x)\n", status);
+                // printf("Unexpected status (0x%x)\n", status);
             }
 
             return status;
@@ -84,7 +84,7 @@ public:
     JobsList();
     ~JobsList();
     std::vector<JobEntry> &getJobsVectorList();
-    void addJob(ExternalCommand *cmd, bool isStopped = false);
+    int addJob(ExternalCommand *cmd, bool isStopped = false);
     void printJobsList(std::ostream &out = std::cout);
     void killAllJobs();
     void removeFinishedJobs();
@@ -98,5 +98,6 @@ public:
     bool continueJob(int jobId);
     int size();
     int countStoppedJobs();
+
     // TODO: Add extra methods or modify exisitng ones as needed
 };

@@ -242,7 +242,9 @@ TEST(FgTests, StoppedJob)
 {
     SmallShell::getInstance().getJobsList().killAllJobs();
     ExternalCommand *command1 = new ExternalCommand("sleep 2 &");
-    SmallShell::getInstance().getJobsList().addJob(command1, true);
+    command1->execute();
+
+    SmallShell::getInstance().getJobsList().getJobById(1).cmd->stopProcess();
 
     ForegroundCommand command = ForegroundCommand("fg 1");
     testing::internal::CaptureStdout();
