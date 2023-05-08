@@ -381,11 +381,12 @@ TEST(PipeTests, AmpersandErrPipe)
 //test for getfiletype
 TEST(FileTypeTests, BasicFileType)
 {
+    testing::internal::CaptureStdout();
     //for each file type
-    SmallShell::getInstance().executeCommand("getfiletype CMackeChace.txt");
-    std::string actual = testing::internal::GetCapturedStderr();
+    SmallShell::getInstance().executeCommand("getfiletype /etc/passwd");
+    std::string actual = testing::internal::GetCapturedStdout();
 
-    std::string expected = "CMakeCache.txt's type is \"regular file\" and takes up 23468 bytes";
+    std::string expected = "/etc/passwd's type is \"regular file\" and takes up 2396 bytes\n";
     EXPECT_EQ(actual, expected);
 
 }

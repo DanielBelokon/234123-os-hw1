@@ -108,7 +108,11 @@ void GetFileInfoCommand::execute()
     // • FIFO
     // • symbolic link
     // • socket
-    stat(pathToFile.c_str(), &fileStat);
+    if (stat(pathToFile.c_str(), &fileStat) < 0)
+    {
+        perror("smash error: stat failed");
+        return;
+    }
     std::cout << pathToFile<< "'s type is " ;
 
     switch (fileStat.st_mode & S_IFMT)
