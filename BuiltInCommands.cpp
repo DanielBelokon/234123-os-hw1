@@ -229,3 +229,24 @@ void KillCommand::execute()
 }
 
 #pragma endregion KillCommand
+
+#pragma region ChangeFileModeCommand
+void  ChangeFileModeCommand::execute()
+{
+    if (cmd_v.size() != 3)
+    {
+       perror("smash error: chmod: invalid arguments");
+        return;
+    }
+
+    int mode = atoi(cmd_v[1].c_str());
+    std::string path = cmd_v[2];
+
+    if (chmod(path.c_str(), mode) < 0)
+    {
+        perror("smash error: chmod failed");
+        return;
+    }
+}
+
+#pragma endregion ChangeFileModeCommand

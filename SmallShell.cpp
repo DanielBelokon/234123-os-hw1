@@ -62,6 +62,10 @@ Command *SmallShell::CreateCommand(const char *cmd_line)
     {
         return new GetFileInfoCommand(cmd_line);
     }
+    else if(firstWord.compare("chmod")==0)
+    {
+        return new ChangeFileModeCommand(cmd_line);
+    }
     else if (cmd_s.find('*') != std::string::npos || cmd_s.find('?') != std::string::npos)
     {
         std::string bash_cmd = "bash -c \"";
