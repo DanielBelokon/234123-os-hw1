@@ -235,7 +235,7 @@ void  ChangeFileModeCommand::execute()
 {
     if (cmd_v.size() != 3)
     {
-       perror("smash error: chmod: invalid arguments");
+        this->printError("chmod: invalid arguments");
         return;
     }
 

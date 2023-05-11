@@ -96,7 +96,7 @@ void GetFileInfoCommand::execute()
 {
     if(cmd_v.size() != 2)
     {
-        perror("smash error: getfiletype: invalid arguments");
+        this->printError("getfiletype: invalid arguments");
         return;
     }
     std::string pathToFile = cmd_v[1];
