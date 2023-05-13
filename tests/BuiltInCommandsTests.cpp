@@ -305,14 +305,14 @@ TEST(QuitTests, IgnoreArgs)
 
 TEST(QuitTests, QuitKill)
 {
-    ExternalCommand *command1 = new ExternalCommand("sleep 2 &");
-    command1->execute();
+    ExternalCommand command1 = ExternalCommand("sleep 2 &");
+    command1.execute();
 
     QuitCommand command = QuitCommand("quit kill");
     testing::internal::CaptureStdout();
     command.execute();
 
-    EXPECT_EQ(testing::internal::GetCapturedStdout(), "smash: sending SIGKILL signal to 1 jobs:\n" + std::to_string(command1->getPid()) + ": sleep 2 &\n");
+    EXPECT_EQ(testing::internal::GetCapturedStdout(), "smash: sending SIGKILL signal to 1 jobs:\n" + std::to_string(command1.getPid()) + ": sleep 2 &\n");
 }
 
 TEST(PipeTests, ExternalToExternal)
@@ -395,4 +395,80 @@ TEST(FileTypeTests, BasicFileType)
 
     EXPECT_EQ(actual, expected);
 
+}
+
+TEST(FileTypeTests, FileTypeDir)
+{
+    testing::internal::CaptureStdout();
+    // for each file type
+    SmallShell::getInstance().executeCommand("getfiletype /etc");
+    std::string actual = testing::internal::GetCapturedStdout();
+
+    std::string expected = "/etc's type is \"directory\" and takes";
+
+    // trim actual size
+    actual = actual.substr(0, actual.find(" up"));
+
+    EXPECT_EQ(actual, expected);
+}
+
+TEST(ChangeFileModeCommand, BasicChangeFileMode)
+{
+    testing::internal::CaptureStderr();
+    // for each file type
+    SmallShell::getInstance().executeCommand("chmod 777 /etc/passwd");
+    std::string actual = testing::internal::GetCapturedStderr();
+
+    std::string expected = "smash error: chmod failed: Operation not permitted\n";
+
+    EXPECT_EQ(actual, expected);
+}
+
+TEST(ChangeFileModeCommand, ChangeFileModeInvalidArgs)
+{
+    testing::internal::CaptureStderr();
+    // for each file type
+    SmallShell::getInstance().executeCommand("chmod 777 /etc/passwd 123");
+    std::string actual = testing::internal::GetCapturedStderr();
+
+    std::string expected = "smash error: chmod: invalid arguments\n";
+
+    EXPECT_EQ(actual, expected);
+}
+
+TEST(ChangeFileModeCommand, ChangeFileModeInvalidFile)
+{
+    testing::internal::CaptureStderr();
+    // for each file type
+    SmallShell::getInstance().executeCommand("chmod 777 /etc/passwd123");
+    std::string actual = testing::internal::GetCapturedStderr();
+
+    std::string expected = "smash error: chmod failed: No such file or directory\n";
+
+    EXPECT_EQ(actual, expected);
+}
+
+TEST(ChangeFileModeCommand, ChangeFileModeInvalidMode)
+{
+    testing::internal::CaptureStderr();
+    // for each file type
+    SmallShell::getInstance().executeCommand("chmod 7777 /etc/passwd");
+    std::string actual = testing::internal::GetCapturedStderr();
+
+    std::string expected = "smash error: chmod failed: Operation not permitted\n";
+
+    EXPECT_EQ(actual, expected);
+}
+
+TEST(ChangeFileModeCommand, CreateAndChange)
+{
+    testing::internal::CaptureStdout();
+    // for each file type
+    SmallShell::getInstance().executeCommand("touch test.txt");
+    SmallShell::getInstance().executeCommand("chmod 777 test.txt");
+    std::string actual = testing::internal::GetCapturedStdout();
+
+    std::string expected = "";
+
+    EXPECT_EQ(actual, expected);
 }

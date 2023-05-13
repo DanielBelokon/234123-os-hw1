@@ -71,7 +71,7 @@ public:
     }
   }
 
-  virtual ~Command(){};
+  virtual ~Command() = default;
   virtual void execute() = 0;
 
   void setIODescriptors();
@@ -79,7 +79,7 @@ public:
 
   std::string getCommandName() const;
 
-  void printError(std::string error_msg) const
+  void printError(const std::string &error_msg) const
   {
     std::cerr << "smash error: " << cmd_v[0] << ": " << error_msg << std::endl;
   }
