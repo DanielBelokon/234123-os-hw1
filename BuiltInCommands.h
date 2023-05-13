@@ -144,6 +144,7 @@ public:
     void execute() override;
 };
 
+// setcore <job_id> <core_num>
 class SetCoreCommand : public BuiltInCommand
 {
 public:

@@ -234,29 +234,29 @@ void KillCommand::execute()
 
 void SetCoreCommand::execute()
 {
-    if (cmd_v.size() != 2)
+    if (cmd_v.size() != 3)
     {
         this->printError("invalid arguments");
         return;
     }
 
-    int core = atoi(cmd_v[1].c_str());
-    if (core < 0)
-    {
-        this->printError("invalid arguments");
-        return;
-    }
-
-    int jobId = atoi(cmd_v[2].c_str());
+    int jobId = atoi(cmd_v[1].c_str());
     pid_t pid = -1;
     // get job pid
     try
     {
-        pid_t pid = SmallShell::getInstance().getJobsList().getJobById(jobId).getJobPid();
+        pid = SmallShell::getInstance().getJobsList().getJobById(jobId).getJobPid();
     }
     catch (const std::exception &e)
     {
         this->printError("job-id " + cmd_v[2] + " does not exist");
+        return;
+    }
+
+    int core = atoi(cmd_v[2].c_str());
+    if (core < 0)
+    {
+        this->printError("invalid core number");
         return;
     }
 

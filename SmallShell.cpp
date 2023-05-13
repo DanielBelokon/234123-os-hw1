@@ -77,10 +77,12 @@ Command *SmallShell::CreateCommand(const char *cmd_line)
         bash_cmd += "\"";
         return new ExternalCommand(bash_cmd.c_str());
     }
-    else
+    else if (firstWord.compare("") != 0)
     {
         return new ExternalCommand(cmd_line);
     }
+
+    return nullptr;
 }
 
 void SmallShell::executeCommand(const char *cmd_line)
@@ -120,6 +122,11 @@ void SmallShell::executeCommand(const char *cmd_line)
     }
 
     Command *cmd = CreateCommand(cmd_line);
+    if (cmd == nullptr)
+    {
+        return;
+    }
+
     cmd->setIODescriptors();
     cmd->execute();
     cmd->cleanup();
