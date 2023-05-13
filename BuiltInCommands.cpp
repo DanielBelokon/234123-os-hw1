@@ -249,7 +249,7 @@ void SetCoreCommand::execute()
     }
     catch (const std::exception &e)
     {
-        this->printError("job-id " + cmd_v[2] + " does not exist");
+        this->printError("job-id " + cmd_v[1] + " does not exist");
         return;
     }
 
