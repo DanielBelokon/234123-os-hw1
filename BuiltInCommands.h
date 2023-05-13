@@ -6,7 +6,7 @@
 #include <iostream>
 #include <string>
 #include <fstream>
-
+#include <sys/stat.h>
 class BuiltInCommand : public Command
 {
 
@@ -141,5 +141,14 @@ class KillCommand : public BuiltInCommand
 public:
     KillCommand(const char *cmd_line) : BuiltInCommand(cmd_line){};
     virtual ~KillCommand() {}
+    void execute() override;
+};
+
+class ChangeFileModeCommand : public BuiltInCommand
+{
+
+    public:
+    ChangeFileModeCommand(const char *cmd_line) : BuiltInCommand(cmd_line){};
+    virtual ~ChangeFileModeCommand() {}
     void execute() override;
 };
