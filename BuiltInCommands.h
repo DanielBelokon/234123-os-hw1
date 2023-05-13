@@ -144,6 +144,14 @@ public:
     void execute() override;
 };
 
+class SetCoreCommand : public BuiltInCommand
+{
+public:
+    SetCoreCommand(const char *cmd_line) : BuiltInCommand(cmd_line){};
+    virtual ~SetCoreCommand() {}
+    void execute() override;
+};
+
 class ChangeFileModeCommand : public BuiltInCommand
 {
 
