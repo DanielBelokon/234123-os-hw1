@@ -230,6 +230,49 @@ void KillCommand::execute()
 
 #pragma endregion KillCommand
 
+#pragma region SetCoreCommand
+
+void SetCoreCommand::execute()
+{
+    if (cmd_v.size() != 3)
+    {
+        this->printError("invalid arguments");
+        return;
+    }
+
+    int jobId = atoi(cmd_v[1].c_str());
+    pid_t pid = -1;
+    // get job pid
+    try
+    {
+        pid = SmallShell::getInstance().getJobsList().getJobById(jobId).getJobPid();
+    }
+    catch (const std::exception &e)
+    {
+        this->printError("job-id " + cmd_v[1] + " does not exist");
+        return;
+    }
+
+    int core = atoi(cmd_v[2].c_str());
+    if (core < 0)
+    {
+        this->printError("invalid core number");
+        return;
+    }
+
+    // set the core using sched_setaffinity
+    cpu_set_t set;
+    CPU_ZERO(&set);
+    CPU_SET(core, &set);
+    if (sched_setaffinity(pid, sizeof(set), &set) < 0)
+    {
+        perror("smash error: sched_setaffinity failed");
+        return;
+    }
+}
+
+#pragma endregion SetCoreCommand
+
 #pragma region ChangeFileModeCommand
 void  ChangeFileModeCommand::execute()
 {

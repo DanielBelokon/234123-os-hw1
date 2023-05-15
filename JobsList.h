@@ -43,8 +43,7 @@ public:
 
             if (wpid == -1)
             {
-                perror("smash: waitpid:");
-                // exit(EXIT_FAILURE);
+                return DONE;
             }
 
             if (wpid == 0)

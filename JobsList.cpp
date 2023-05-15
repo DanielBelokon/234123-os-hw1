@@ -42,6 +42,7 @@ void JobsList::printJobsList(std::ostream &out)
 
 void JobsList::killAllJobs()
 {
+    removeFinishedJobs();
     std::cout << "smash: sending SIGKILL signal to " << jobs.size() << " jobs:" << std::endl;
 
     for (auto &job : jobs)

@@ -472,3 +472,72 @@ TEST(ChangeFileModeCommand, CreateAndChange)
 
     EXPECT_EQ(actual, expected);
 }
+
+TEST(SetCoreCommand, FewArguments)
+{
+    testing::internal::CaptureStderr();
+    // for each file type
+    SmallShell::getInstance().executeCommand("setcore 1");
+    std::string actual = testing::internal::GetCapturedStderr();
+
+    std::string expected = "smash error: setcore: invalid arguments\n";
+
+    EXPECT_EQ(actual, expected);
+}
+
+TEST(SetCoreCommand, InvalidJob)
+{
+    testing::internal::CaptureStderr();
+    // for each file type
+    SmallShell::getInstance().executeCommand("setcore 0 1");
+    std::string actual = testing::internal::GetCapturedStderr();
+
+    std::string expected = "smash error: setcore: job-id 0 does not exist\n";
+
+    EXPECT_EQ(actual, expected);
+}
+
+TEST(SetCoreCommand, BasicSetCore)
+{
+    // create nano process in the background
+    ExternalCommand command = ExternalCommand("nano &");
+    command.execute();
+
+    testing::internal::CaptureStdout();
+
+    // set core to 1
+    SmallShell::getInstance().executeCommand("setcore 1 1");
+    std::string actual = testing::internal::GetCapturedStdout();
+
+    std::string expected = "";
+
+    EXPECT_EQ(actual, expected);
+
+    // check if nano is running on core 1 using ps
+    testing::internal::CaptureStdout();
+
+    // format should be
+    std::string cmd = "ps -o pid,psr,comm -p " + std::to_string(command.getPid()) + " | grep nano";
+    SmallShell::getInstance().executeCommand(cmd.c_str());
+
+    expected = std::to_string(command.getPid()) + "   1 nano\n";
+
+    // set core to 2
+    actual = testing::internal::GetCapturedStdout();
+    EXPECT_EQ(actual, expected);
+
+    // check if nano is running on core 2 using ps
+    testing::internal::CaptureStdout();
+    SmallShell::getInstance().executeCommand("setcore 1 2");
+
+    // sleep for 0.1 seconds to make sure the process is running on core 2
+    sleep(0.1);
+
+    SmallShell::getInstance().executeCommand(cmd.c_str());
+
+    expected = std::to_string(command.getPid()) + "   2 nano\n";
+
+    actual = testing::internal::GetCapturedStdout();
+
+    EXPECT_EQ(actual, expected);
+}

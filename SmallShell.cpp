@@ -66,6 +66,10 @@ Command *SmallShell::CreateCommand(const char *cmd_line)
     {
         return new ChangeFileModeCommand(cmd_line);
     }
+    else if (firstWord.compare("setcore") == 0)
+    {
+        return new SetCoreCommand(cmd_line);
+    }
     else if (cmd_s.find('*') != std::string::npos || cmd_s.find('?') != std::string::npos)
     {
         std::string bash_cmd = "bash -c \"";
@@ -73,7 +77,7 @@ Command *SmallShell::CreateCommand(const char *cmd_line)
         bash_cmd += "\"";
         return new ExternalCommand(bash_cmd.c_str());
     }
-    else
+    else if (firstWord.compare("") != 0)
     {
         return new ExternalCommand(cmd_line);
     }
@@ -118,6 +122,11 @@ void SmallShell::executeCommand(const char *cmd_line)
     }
 
     Command *cmd = CreateCommand(cmd_line);
+    if (cmd == nullptr)
+    {
+        return;
+    }
+
     cmd->setIODescriptors();
     cmd->execute();
     cmd->cleanup();
