@@ -58,11 +58,11 @@ Command *SmallShell::CreateCommand(const char *cmd_line)
     {
         return new KillCommand(cmd_line);
     }
-    else if(firstWord.compare("getfiletype")==0)
+    else if (firstWord.compare("getfiletype") == 0)
     {
         return new GetFileInfoCommand(cmd_line);
     }
-    else if(firstWord.compare("chmod")==0)
+    else if (firstWord.compare("chmod") == 0)
     {
         return new ChangeFileModeCommand(cmd_line);
     }
@@ -118,6 +118,14 @@ void SmallShell::executeCommand(const char *cmd_line)
 
         PipeCommand pipeCommand = PipeCommand(cmd_line, commands, RedirectErrVector);
         pipeCommand.execute();
+
+        // foreach command
+
+        for (Command *cmd : commands)
+        {
+            delete cmd;
+        }
+
         return;
     }
 
@@ -130,7 +138,7 @@ void SmallShell::executeCommand(const char *cmd_line)
     cmd->setIODescriptors();
     cmd->execute();
     cmd->cleanup();
-    // delete cmd;
+    delete cmd;
     // Please note that you must fork smash process for some commands (e.g., external commands....)
 }
 
@@ -148,4 +156,3 @@ JobsList &SmallShell::getJobsList()
 {
     return _jobsList;
 }
-

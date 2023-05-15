@@ -136,11 +136,11 @@ void ForegroundCommand::execute()
 void ForegroundCommand::MoveJobToForeground(JobsList::JobEntry &job)
 {
     // print the command with PID
-    std::cout << job.cmd->getCommandName() << " : " << job.getJobPid() << std::endl;
+    std::cout << job.cmd << " : " << job.getPid() << std::endl;
     // sent job to foreground
     SmallShell::getInstance().setForeground(job.getJobId());
-    kill(job.getJobPid(), SIGCONT);
-    waitpid(job.getJobPid(), nullptr, WUNTRACED);
+    kill(job.getPid(), SIGCONT);
+    waitpid(job.getPid(), nullptr, WUNTRACED);
 }
 #pragma endregion
 
@@ -218,13 +218,13 @@ void KillCommand::execute()
         return;
     }
 
-    if (kill(job.getJobPid(), signal) < 0)
+    if (kill(job.getPid(), signal) < 0)
     {
         perror("smash error: kill failed");
     }
     else
     {
-        std::cout << "signal number " << signal << " was sent to pid " << job.getJobPid() << std::endl;
+        std::cout << "signal number " << signal << " was sent to pid " << job.getPid() << std::endl;
     }
 }
 
@@ -245,7 +245,7 @@ void SetCoreCommand::execute()
     // get job pid
     try
     {
-        pid = SmallShell::getInstance().getJobsList().getJobById(jobId).getJobPid();
+        pid = SmallShell::getInstance().getJobsList().getJobById(jobId).getPid();
     }
     catch (const std::exception &e)
     {

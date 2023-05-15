@@ -39,7 +39,7 @@ public:
             return false;
         }
         auto &job = SmallShell::getInstance().getJobsList().getJobById(foregroundJob);
-        job.cmd->stopProcess();
+        job.stopProcess();
         job.timeStarted = time(nullptr);
 
         foregroundJob = NO_JOB;
@@ -53,7 +53,7 @@ public:
             return false;
         }
         auto &job = SmallShell::getInstance().getJobsList().getJobById(foregroundJob);
-        job.cmd->killProcess();
+        job.killProcess();
         foregroundJob = NO_JOB;
         return true;
     }

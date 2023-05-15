@@ -173,9 +173,9 @@ TEST(JobsTests, BasicList)
     std::string actual = testing::internal::GetCapturedStdout();
     std::string expected;
     // TODO: print the actual command received or the name?
-    expected += "[1]sleep : " + std::to_string(command1->getPid()) + " 0 secs\n";
-    expected += "[2]sleep : " + std::to_string(command2->getPid()) + " 0 secs\n";
-    expected += "[3]sleep : " + std::to_string(command3->getPid()) + " 0 secs\n";
+    expected += "[1]sleep 5 & : " + std::to_string(command1->getPid()) + " 0 secs\n";
+    expected += "[2]sleep 5 & : " + std::to_string(command2->getPid()) + " 0 secs\n";
+    expected += "[3]sleep 5 & : " + std::to_string(command3->getPid()) + " 0 secs\n";
 
     EXPECT_EQ(expected, actual);
     SmallShell::getInstance().getJobsList().killAllJobs();
@@ -211,7 +211,7 @@ TEST(FgTests, BasicForeground)
     std::string actual = testing::internal::GetCapturedStdout();
     std::string expected;
 
-    expected += "sleep : " + std::to_string(command1->getPid()) + "\n";
+    expected += "sleep 2 & : " + std::to_string(command1->getPid()) + "\n";
 
     EXPECT_EQ(expected, actual);
     SmallShell::getInstance().getJobsList().killAllJobs();
@@ -232,7 +232,7 @@ TEST(FgTests, ForegroundId)
     std::string actual = testing::internal::GetCapturedStdout();
     std::string expected;
 
-    expected += "sleep : " + std::to_string(command1->getPid()) + "\n";
+    expected += "sleep 2 & : " + std::to_string(command1->getPid()) + "\n";
 
     EXPECT_EQ(expected, actual);
     SmallShell::getInstance().getJobsList().killAllJobs();
@@ -244,7 +244,7 @@ TEST(FgTests, StoppedJob)
     ExternalCommand *command1 = new ExternalCommand("sleep 2 &");
     command1->execute();
 
-    SmallShell::getInstance().getJobsList().getJobById(1).cmd->stopProcess();
+    SmallShell::getInstance().getJobsList().getJobById(1).stopProcess();
 
     ForegroundCommand command = ForegroundCommand("fg 1");
     testing::internal::CaptureStdout();
@@ -256,7 +256,7 @@ TEST(FgTests, StoppedJob)
     std::string actual = testing::internal::GetCapturedStdout();
     std::string expected;
 
-    expected += "sleep : " + std::to_string(command1->getPid()) + "\n";
+    expected += "sleep 2 & : " + std::to_string(command1->getPid()) + "\n";
 
     EXPECT_EQ(expected, actual);
     SmallShell::getInstance().getJobsList().killAllJobs();
@@ -380,11 +380,11 @@ TEST(PipeTests, AmpersandErrPipe)
 
     EXPECT_EQ(actual, "smash error: fg: invalid arguments\n");
 }
-//test for getfiletype
+// test for getfiletype
 TEST(FileTypeTests, BasicFileType)
 {
     testing::internal::CaptureStdout();
-    //for each file type
+    // for each file type
     SmallShell::getInstance().executeCommand("getfiletype /etc/passwd");
     std::string actual = testing::internal::GetCapturedStdout();
 
@@ -394,7 +394,6 @@ TEST(FileTypeTests, BasicFileType)
     actual = actual.substr(0, actual.find(" up"));
 
     EXPECT_EQ(actual, expected);
-
 }
 
 TEST(FileTypeTests, FileTypeDir)
@@ -520,7 +519,7 @@ TEST(SetCoreCommand, BasicSetCore)
     std::string cmd = "ps -o pid,psr,comm -p " + std::to_string(command.getPid()) + " | grep nano";
     SmallShell::getInstance().executeCommand(cmd.c_str());
 
-    expected = std::to_string(command.getPid()) + "   1 nano\n";
+    expected = " " + std::to_string(command.getPid()) + "   1 nano\n";
 
     // set core to 2
     actual = testing::internal::GetCapturedStdout();
@@ -530,12 +529,9 @@ TEST(SetCoreCommand, BasicSetCore)
     testing::internal::CaptureStdout();
     SmallShell::getInstance().executeCommand("setcore 1 2");
 
-    // sleep for 0.1 seconds to make sure the process is running on core 2
-    sleep(0.1);
-
     SmallShell::getInstance().executeCommand(cmd.c_str());
 
-    expected = std::to_string(command.getPid()) + "   2 nano\n";
+    expected = " " + std::to_string(command.getPid()) + "   2 nano\n";
 
     actual = testing::internal::GetCapturedStdout();
 

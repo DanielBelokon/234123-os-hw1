@@ -17,20 +17,22 @@ public:
     class JobEntry
     {
     public:
-        ExternalCommand *cmd;
+        std::string cmd;
         int jobId;
         int jobPid;
         JobStatus status;
         time_t timeStarted;
 
-        JobEntry(ExternalCommand *cmd, int jobId, int pid, JobStatus status) : cmd(cmd), jobId(jobId), jobPid(pid), status(status), timeStarted(time(nullptr))
+        JobEntry(std::string cmd, int jobId, int pid) : cmd(cmd), jobId(jobId), jobPid(pid), status(status), timeStarted(time(nullptr))
         {
         }
+
         int getJobId()
         {
             return jobId;
         }
-        int getJobPid()
+
+        int getPid()
         {
             return jobPid;
         }
@@ -39,7 +41,7 @@ public:
         {
 
             pid_t wpid;
-            int st = cmd->getProcessStatus(wpid);
+            int st = getProcessStatus(wpid);
 
             if (wpid == -1)
             {
@@ -73,6 +75,44 @@ public:
 
             return status;
         }
+
+        void killProcess()
+        {
+            sigProcess(SIGKILL);
+            return;
+        }
+
+        void continueProcess()
+        {
+            sigProcess(SIGCONT);
+            return;
+        }
+
+        void stopProcess()
+        {
+            sigProcess(SIGTSTP);
+            return;
+        }
+
+        std::string getCmdLine()
+        {
+            return cmd;
+        }
+
+        int getProcessStatus(pid_t &retPid)
+        {
+            int status;
+            retPid = waitpid(this->getPid(), &status, WUNTRACED | WNOHANG | WCONTINUED);
+            return status;
+        }
+
+        void sigProcess(int _sig)
+        {
+            if (kill(this->getPid(), _sig) == -1)
+            {
+                perror("smash error: kill failed");
+            }
+        }
     };
     // TODO: Add your data members
 private:
@@ -83,7 +123,7 @@ public:
     JobsList();
     ~JobsList();
     std::vector<JobEntry> &getJobsVectorList();
-    int addJob(ExternalCommand *cmd, bool isStopped = false);
+    int addJob(pid_t pid, std::string cmd);
     void printJobsList(std::ostream &out = std::cout);
     void killAllJobs();
     void removeFinishedJobs();

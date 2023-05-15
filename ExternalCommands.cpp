@@ -44,7 +44,7 @@ void ExternalCommand::execute()
     else
     {
         // add to jobs list
-        auto jobEntry = SmallShell::getInstance().getJobsList().addJob(this);
+        auto jobEntry = SmallShell::getInstance().getJobsList().addJob(pid, this->cmd_line);
         if (!this->_executeInBackground)
         {
             // wait for child process to finish
@@ -57,37 +57,4 @@ void ExternalCommand::execute()
 int ExternalCommand::getPid()
 {
     return pid;
-}
-
-void ExternalCommand::killProcess(){
-    kill(this->getPid(), SIGKILL);
-    return ;
-}
-
-bool ExternalCommand::isExecuteInBackground()
-{
-    return _executeInBackground;
-}
-
-void ExternalCommand::continueProcess()
-{
-    kill(this->getPid(), SIGCONT);
-    return;
-}
-
-void ExternalCommand::stopProcess()
-{
-    kill(this->getPid(), SIGTSTP);
-    return;
-}
-std::string ExternalCommand::getCmdLine()
-{
-    return std::string(cmd_line);
-}
-
-int ExternalCommand::getProcessStatus(pid_t &retPid)
-{
-    int status;
-    retPid = waitpid(this->getPid(), &status, WUNTRACED | WNOHANG | WCONTINUED);
-    return status;
 }
