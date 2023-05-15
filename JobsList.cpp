@@ -13,12 +13,9 @@ std::vector<JobsList::JobEntry> &JobsList::getJobsVectorList()
 {
     return jobs;
 }
-int JobsList::addJob(ExternalCommand *cmd, bool isStopped)
+int JobsList::addJob(pid_t pid, std::string cmd)
 {
-    // maybe we need to execute the command first ? and get the pid from the execute ?
-    //pid_t pid = (int)cmd->execute(); // Note : execute is void , maybe need to change.
-    pid_t pid = cmd->getPid();
-    JobEntry job = JobEntry(cmd, ++maxJobId, pid, isStopped ? STOPPED : RUNNING);
+    JobEntry job = JobEntry(cmd, ++maxJobId, pid);
     jobs.push_back(job);
     return job.jobId;
 }
@@ -29,7 +26,7 @@ void JobsList::printJobsList(std::ostream &out)
 
     for (auto &job : jobs)
     {
-        std::cout << "[" << job.jobId << "]" << job.cmd->getCommandName() << " : " << job.jobPid << " ";
+        std::cout << "[" << job.jobId << "]" << job.cmd << " : " << job.jobPid << " ";
         time_t delta_time = difftime(time(nullptr), job.timeStarted);
         std::cout << delta_time << " secs";
         if (job.getStatus() == STOPPED)
@@ -47,8 +44,8 @@ void JobsList::killAllJobs()
 
     for (auto &job : jobs)
     {
-        std::cout << job.jobPid << ": " << job.cmd->getCmdLine() << std::endl;
-        job.cmd->killProcess();
+        std::cout << job.jobPid << ": " << job.cmd << std::endl;
+        job.killProcess();
     }
 }
 
@@ -143,7 +140,7 @@ JobsList::JobEntry &JobsList::getJobWithMaxID()
 
 bool JobsList::continueJob(int jobId)
 {
-    getJobById(jobId).cmd->continueProcess();
+    getJobById(jobId).continueProcess();
     getJobById(jobId).status = RUNNING;
     return true;
 }
