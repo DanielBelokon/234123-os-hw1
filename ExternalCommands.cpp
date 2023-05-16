@@ -31,25 +31,29 @@ void ExternalCommand::execute()
         if (execvp(cmd_v[0].c_str(), arg_v) == -1)
         {
             // TODO: Handle error, check required message
-            perror("smash error: execvp:");
+            perror("smash error: execvp");
             exit(1);
         }
     }
     else if (pid < 0)
     {
         // TODO: Handle error, check required message
-        perror("smash error: fork: ");
+        perror("smash error: fork");
     }
     // Parent process
     else
     {
         // add to jobs list
-        auto jobEntry = SmallShell::getInstance().getJobsList().addJob(pid, this->cmd_line, this->timeout);
         if (!this->_executeInBackground)
         {
             // wait for child process to finish
-            SmallShell::getInstance().setForeground(jobEntry);
-            waitpid(pid, NULL, WUNTRACED);
+            pid_t pidr = waitpid(pid, NULL, 0);
+            if (pidr == -1)
+            {
+                perror("smash error: waitpid");
+            }
+            return;
         }
+        auto jobEntry = SmallShell::getInstance().getJobsList().addJob(pid, this->cmd_line, this->timeout);
     }
 }

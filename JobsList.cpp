@@ -17,11 +17,6 @@ int JobsList::addJob(pid_t pid, std::string cmd, time_t timeout)
 {
     JobEntry job = JobEntry(cmd, ++maxJobId, pid, timeout);
 
-    if (job.getStatus() == DONE)
-    {
-        return -1;
-    }
-
     jobs.push_back(job);
 
     if (timeout != -1)
@@ -38,7 +33,9 @@ void JobsList::printJobsList(std::ostream &out)
 
     for (auto &job : jobs)
     {
-        std::cout << "[" << job.jobId << "]" << job.cmd << " : " << job.jobPid << " ";
+        if (job.isForeground)
+            continue;
+        std::cout << "[" << job.jobId << "] " << job.cmd << " : " << job.jobPid << " ";
         time_t delta_time = difftime(time(nullptr), job.timeStarted);
         std::cout << delta_time << " secs";
         if (job.getStatus() == STOPPED)
@@ -153,7 +150,6 @@ JobsList::JobEntry &JobsList::getJobWithMaxID()
 bool JobsList::continueJob(int jobId)
 {
     getJobById(jobId).continueProcess();
-    getJobById(jobId).status = RUNNING;
     return true;
 }
 
@@ -177,6 +173,7 @@ int JobsList::countStoppedJobs()
 
 void JobsList::timeoutJob()
 {
+    removeFinishedJobs();
     for (int i = 0; i < jobs.size(); i++)
     {
         if (jobs[i].timeoutTime != -1 && jobs[i].timeoutTime <= time(nullptr))

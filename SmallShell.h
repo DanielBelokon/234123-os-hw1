@@ -42,6 +42,7 @@ public:
         auto &job = SmallShell::getInstance().getJobsList().getJobById(foregroundJob);
         job.stopProcess();
         job.timeStarted = time(nullptr);
+        job.isForeground = false;
 
         foregroundJob = NO_JOB;
         return true;
@@ -67,6 +68,11 @@ public:
     void setForeground(int job)
     {
         foregroundJob = job;
+        if (job != NO_JOB)
+        {
+            _jobsList.getJobById(job).isForeground = true;
+            return;
+        }
     }
 
     int

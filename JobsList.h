@@ -24,10 +24,12 @@ public:
         JobStatus status;
         time_t timeStarted;
         time_t timeoutTime;
+        bool isForeground = false;
 
         JobEntry(std::string cmd, int jobId, int pid, time_t timeout = -1) : cmd(cmd), jobId(jobId), jobPid(pid)
         {
             timeStarted = time(nullptr);
+            status = RUNNING;
             if (timeout != -1)
             {
                 timeoutTime = timeStarted + timeout;
@@ -56,7 +58,7 @@ public:
 
             if (wpid == -1)
             {
-                return DONE;
+                return REMOVED;
             }
 
             if (wpid == 0)
@@ -64,15 +66,15 @@ public:
                 return status;
             }
 
-            if (WIFEXITED(st) || WIFSIGNALED(st))
-            {
-                // printf("child exited, status=%d\n", WEXITSTATUS(st));
-                status = DONE;
-            }
-            else if (WIFSTOPPED(st))
+            if (WIFSTOPPED(st))
             {
                 // printf("child stopped (signal %d)\n", WSTOPSIG(st));
                 status = STOPPED;
+            }
+            else if (WIFEXITED(st) || WIFSIGNALED(st))
+            {
+                // printf("child exited, status=%d\n", WEXITSTATUS(st));
+                status = DONE;
             }
             else if (WIFCONTINUED(st))
             {
@@ -89,19 +91,22 @@ public:
 
         void killProcess()
         {
+            status = REMOVED;
             sigProcess(SIGKILL);
             return;
         }
 
         void continueProcess()
         {
+            status = RUNNING;
             sigProcess(SIGCONT);
             return;
         }
 
         void stopProcess()
         {
-            sigProcess(SIGTSTP);
+            status = STOPPED;
+            sigProcess(SIGSTOP);
             return;
         }
 
@@ -112,13 +117,14 @@ public:
 
         int getProcessStatus(pid_t &retPid)
         {
-            int status;
-            retPid = waitpid(this->getPid(), &status, WUNTRACED | WNOHANG | WCONTINUED);
-            return status;
+            int st;
+            retPid = waitpid(this->getPid(), &st, WUNTRACED | WNOHANG | WCONTINUED | WEXITED);
+            return st;
         }
 
         void sigProcess(int _sig)
         {
+            // printf("smash > signal %d was sent to pid %d\n", _sig, this->getPid());
             if (kill(this->getPid(), _sig) == -1)
             {
                 perror("smash error: kill failed");

@@ -1,4 +1,5 @@
 #include "BuiltInCommands.h"
+#include "CommandUtils.h"
 #pragma region ChangePromptCommand
 
 /// @brief Change the prompt of the shell
@@ -120,8 +121,15 @@ void ForegroundCommand::execute()
         JobsList::JobEntry job = SmallShell::getInstance().getJobsList().getJobWithMaxID();
         MoveJobToForeground(job);
     }
-    else{
-        int id = atoi(cmd_v[1].c_str());
+    else
+    {
+        if (!CommandUtils::is_digits(cmd_v[1]))
+        {
+            this->printError("invalid arguments");
+            return;
+        }
+
+        int id = std::atoi(cmd_v[1].c_str());
         try
         {
             JobsList::JobEntry job = SmallShell::getInstance().getJobsList().getJobById(id);
@@ -139,8 +147,8 @@ void ForegroundCommand::MoveJobToForeground(JobsList::JobEntry &job)
     std::cout << job.cmd << " : " << job.getPid() << std::endl;
     // sent job to foreground
     SmallShell::getInstance().setForeground(job.getJobId());
-    kill(job.getPid(), SIGCONT);
-    waitpid(job.getPid(), nullptr, WUNTRACED);
+    job.continueProcess();
+    waitpid(job.getPid(), nullptr, 0);
 }
 #pragma endregion
 
@@ -150,7 +158,7 @@ void BackgroundCommand::execute()
 {
     JobsList &jlInstance = SmallShell::getInstance().getJobsList();
     // if number of arguments is not 1 or 2
-    if (cmd_v.size() > 2)
+    if (cmd_v.size() > 2 || !CommandUtils::is_digits(cmd_v[1]))
     {
         this->printError("invalid arguments");
 
@@ -163,14 +171,23 @@ void BackgroundCommand::execute()
         return;
     }
     int jobId = std::stoi(cmd_v[1]);
-
-    if (cmd_v.size() == 2 && jlInstance.getJobById(jobId).getStatus() == 0)
+    try
     {
-        this->printError("job-id <job-id> is already running in the background ");
-        return;
+        JobsList::JobEntry &job = jlInstance.getJobById(jobId);
+
+        if (cmd_v.size() == 2 && job.getStatus() == 0)
+        {
+            this->printError("job-id " + cmd_v[1] + " is already running in the background");
+            return;
+        }
+        // if the job does not exist
+        if (cmd_v.size() == 2 && job.getJobId() == -1)
+        {
+            this->printError("job-id " + cmd_v[1] + " does not exist");
+            return;
+        }
     }
-    // if the job does not exist
-    if (cmd_v.size() == 2 && jlInstance.getJobById(jobId).getJobId() == -1)
+    catch (const std::exception &e)
     {
         this->printError("job-id " + cmd_v[1] + " does not exist");
         return;
@@ -179,7 +196,7 @@ void BackgroundCommand::execute()
     if (cmd_v.size() > 1)
         jlInstance.continueJob(jobId);
     else
-        jlInstance.continueJob(jlInstance.getMaxJobIdInArray());
+        jlInstance.getLastStoppedJob().continueProcess();
 }
 
 #pragma endregion BackgroundCommand
@@ -202,7 +219,7 @@ void QuitCommand::execute()
 
 void KillCommand::execute()
 {
-    if (cmd_v.size() != 3)
+    if (cmd_v.size() != 3 || !CommandUtils::is_digits(cmd_v[1]) || !CommandUtils::is_digits(cmd_v[2]))
     {
         this->printError("invalid arguments");
         return;
@@ -210,8 +227,17 @@ void KillCommand::execute()
 
     int signal = -atoi(cmd_v[1].c_str());
     int jobId = atoi(cmd_v[2].c_str());
+    JobsList::JobEntry job("", jobId, 0, 0);
 
-    JobsList::JobEntry job = SmallShell::getInstance().getJobsList().getJobById(jobId);
+    try
+    {
+        job = SmallShell::getInstance().getJobsList().getJobById(jobId);
+    }
+    catch (const std::exception &e)
+    {
+        this->printError("job-id " + cmd_v[2] + " does not exist");
+        return;
+    }
     if (job.getJobId() == -1)
     {
         this->printError("job-id " + cmd_v[2] + " does not exist");
@@ -234,7 +260,7 @@ void KillCommand::execute()
 
 void SetCoreCommand::execute()
 {
-    if (cmd_v.size() != 3)
+    if (cmd_v.size() != 3 || !CommandUtils::is_digits(cmd_v[1]) || !CommandUtils::is_digits(cmd_v[2]))
     {
         this->printError("invalid arguments");
         return;
