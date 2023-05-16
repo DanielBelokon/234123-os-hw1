@@ -5,6 +5,7 @@
 // #include "PipeCommand.h"
 // #include "RedirectionCommand.h"
 #include <string>
+#include <map>
 #include <linux/limits.h>
 #include "CommandUtils.h"
 #include "JobsList.h"
@@ -58,7 +59,10 @@ public:
         return true;
     }
 
-    bool alarmHandler() { return true; }
+    bool alarmHandler()
+    {
+        SmallShell::getInstance().getJobsList().timeoutJob();
+    }
 
     void setForeground(int job)
     {

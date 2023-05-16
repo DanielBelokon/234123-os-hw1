@@ -13,10 +13,22 @@ std::vector<JobsList::JobEntry> &JobsList::getJobsVectorList()
 {
     return jobs;
 }
-int JobsList::addJob(pid_t pid, std::string cmd)
+int JobsList::addJob(pid_t pid, std::string cmd, time_t timeout)
 {
-    JobEntry job = JobEntry(cmd, ++maxJobId, pid);
+    JobEntry job = JobEntry(cmd, ++maxJobId, pid, timeout);
+
+    if (job.getStatus() == DONE)
+    {
+        return -1;
+    }
+
     jobs.push_back(job);
+
+    if (timeout != -1)
+    {
+        alarm(timeout);
+    }
+
     return job.jobId;
 }
 
@@ -161,4 +173,16 @@ int JobsList::countStoppedJobs()
         }
     }
     return count;
+}
+
+void JobsList::timeoutJob()
+{
+    for (int i = 0; i < jobs.size(); i++)
+    {
+        if (jobs[i].timeoutTime != -1 && jobs[i].timeoutTime <= time(nullptr))
+        {
+            std::cout << "smash: " << jobs[i].cmd << " timed out!" << std::endl;
+            jobs[i].killProcess();
+        }
+    }
 }

@@ -55,7 +55,7 @@ std::string Command::getCommandName() const
 PipeCommand::PipeCommand(const char *cmd_line, std::vector<Command *> commands, std::vector<bool> redirectErr) : Command(cmd_line), commands(commands), redirectErrVector(redirectErr)
 {
     // create pipes for each command and set the fd member appropriately
-    for (int i = 0; i < commands.size() - 1; i++)
+    for (size_t i = 0; i < commands.size() - 1; i++)
     {
         int pipefd[2];
         if (pipe(pipefd) == -1)

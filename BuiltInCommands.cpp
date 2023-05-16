@@ -240,7 +240,7 @@ void SetCoreCommand::execute()
         return;
     }
 
-    int jobId = atoi(cmd_v[1].c_str());
+    int jobId = std::stoi(cmd_v[1]);
     pid_t pid = -1;
     // get job pid
     try
@@ -253,7 +253,7 @@ void SetCoreCommand::execute()
         return;
     }
 
-    int core = atoi(cmd_v[2].c_str());
+    int core = std::stoi(cmd_v[2]);
     if (core < 0)
     {
         this->printError("invalid core number");

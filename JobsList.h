@@ -3,6 +3,7 @@
 #include "ExternalCommands.h"
 #include <ctime>
 #include <vector>
+#include <map>
 class JobsList
 {
     enum JobStatus
@@ -22,9 +23,19 @@ public:
         int jobPid;
         JobStatus status;
         time_t timeStarted;
+        time_t timeoutTime;
 
-        JobEntry(std::string cmd, int jobId, int pid) : cmd(cmd), jobId(jobId), jobPid(pid), status(status), timeStarted(time(nullptr))
+        JobEntry(std::string cmd, int jobId, int pid, time_t timeout = -1) : cmd(cmd), jobId(jobId), jobPid(pid)
         {
+            timeStarted = time(nullptr);
+            if (timeout != -1)
+            {
+                timeoutTime = timeStarted + timeout;
+            }
+            else
+            {
+                timeoutTime = -1;
+            }
         }
 
         int getJobId()
@@ -117,13 +128,14 @@ public:
     // TODO: Add your data members
 private:
     std::vector<JobEntry> jobs;
+    std::map<time_t, int> timeoutMap;
     int maxJobId;
 
 public:
     JobsList();
     ~JobsList();
     std::vector<JobEntry> &getJobsVectorList();
-    int addJob(pid_t pid, std::string cmd);
+    int addJob(pid_t pid, std::string cmd, time_t timeout = -1);
     void printJobsList(std::ostream &out = std::cout);
     void killAllJobs();
     void removeFinishedJobs();
@@ -137,6 +149,8 @@ public:
     bool continueJob(int jobId);
     int size();
     int countStoppedJobs();
+
+    void timeoutJob();
 
     // TODO: Add extra methods or modify exisitng ones as needed
 };

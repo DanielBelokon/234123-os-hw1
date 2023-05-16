@@ -15,10 +15,6 @@
 
 class Command
 {
-  // TODO: Add your data members
-  // output stream for the command
-  std::ostream *out;
-  // output file descriptor
 
 public:
   int output_fd = -1;
@@ -28,6 +24,9 @@ public:
   int oldStdout;
   int oldStderr;
   int oldStdin;
+
+  int job_id = -1;
+  int pid = -1;
 
   std::vector<std::string> cmd_v;
 
@@ -76,6 +75,11 @@ public:
 
   void setIODescriptors();
   void cleanup();
+
+  pid_t getPid()
+  {
+    return pid;
+  }
 
   std::string getCommandName() const;
 

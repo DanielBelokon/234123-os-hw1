@@ -4,7 +4,7 @@
 #include <unistd.h>
 #include <fcntl.h>
 
-ExternalCommand::ExternalCommand(const char *cmd_line) : cmd_line(cmd_line), Command(cmd_line)
+ExternalCommand::ExternalCommand(const char *cmd_line, time_t timeout) : Command(cmd_line), cmd_line(cmd_line), timeout(timeout)
 {
     this->_executeInBackground = CommandUtils::_isBackgroundComamnd(cmd_line);
 }
@@ -44,7 +44,7 @@ void ExternalCommand::execute()
     else
     {
         // add to jobs list
-        auto jobEntry = SmallShell::getInstance().getJobsList().addJob(pid, this->cmd_line);
+        auto jobEntry = SmallShell::getInstance().getJobsList().addJob(pid, this->cmd_line, this->timeout);
         if (!this->_executeInBackground)
         {
             // wait for child process to finish
@@ -52,9 +52,4 @@ void ExternalCommand::execute()
             waitpid(pid, NULL, WUNTRACED);
         }
     }
-}
-
-int ExternalCommand::getPid()
-{
-    return pid;
 }
