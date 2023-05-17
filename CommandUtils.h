@@ -1,4 +1,5 @@
-#pragma once
+#ifndef SMASH_COMMANDUTILS_H_
+#define SMASH_COMMANDUTILS_H_
 #include <string>
 #include <unistd.h>
 #include <string.h>
@@ -96,11 +97,24 @@ namespace CommandUtils
         std::istringstream iss(s);
         std::string word;
 
-        while (iss >> std::quoted(word))
+        while (iss >> word)
         {
+            if (word[0] == '"')
+            {
+                std::string quoted;
+                std::getline(iss, quoted, '"');
+                word += quoted;
+            }
             words.push_back(word);
         }
 
         return words;
     }
+
+    inline bool is_digits(const std::string &str)
+    {
+        return str.find_first_not_of("0123456789") == std::string::npos;
+    }
 }
+
+#endif // SMASH_COMMANDUTILS_H_

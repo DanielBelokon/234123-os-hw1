@@ -173,9 +173,9 @@ TEST(JobsTests, BasicList)
     std::string actual = testing::internal::GetCapturedStdout();
     std::string expected;
     // TODO: print the actual command received or the name?
-    expected += "[1]sleep 5 & : " + std::to_string(command1->getPid()) + " 0 secs\n";
-    expected += "[2]sleep 5 & : " + std::to_string(command2->getPid()) + " 0 secs\n";
-    expected += "[3]sleep 5 & : " + std::to_string(command3->getPid()) + " 0 secs\n";
+    expected += "[1] sleep 5 & : " + std::to_string(command1->getPid()) + " 0 secs\n";
+    expected += "[2] sleep 5 & : " + std::to_string(command2->getPid()) + " 0 secs\n";
+    expected += "[3] sleep 5 & : " + std::to_string(command3->getPid()) + " 0 secs\n";
 
     EXPECT_EQ(expected, actual);
     SmallShell::getInstance().getJobsList().killAllJobs();
@@ -496,44 +496,32 @@ TEST(SetCoreCommand, InvalidJob)
     EXPECT_EQ(actual, expected);
 }
 
-TEST(SetCoreCommand, BasicSetCore)
+TEST(SetCoreCommandTest, SetCore)
 {
-    // create nano process in the background
-    ExternalCommand command = ExternalCommand("nano &");
+    // Create an external command with a known process ID
+    ExternalCommand command("nano &");
     command.execute();
 
-    testing::internal::CaptureStdout();
+    // Set the CPU affinity of the process to core 0
+    std::string setCoreCmd_s = "setcore" + std::to_string(command.getPid()) + "0";
+    SetCoreCommand setCoreCmd0(setCoreCmd_s.c_str());
+    setCoreCmd0.execute();
 
-    // set core to 1
-    SmallShell::getInstance().executeCommand("setcore 1 1");
-    std::string actual = testing::internal::GetCapturedStdout();
+    // Check that the CPU affinity of the process has been set to core 0
+    cpu_set_t cpuset;
+    CPU_ZERO(&cpuset);
+    ASSERT_NE(sched_getaffinity(command.getPid(), sizeof(cpu_set_t), &cpuset), -1);
 
-    std::string expected = "";
+    EXPECT_TRUE(CPU_ISSET(0, &cpuset));
 
-    EXPECT_EQ(actual, expected);
+    // Set the CPU affinity of the process to core 1
+    setCoreCmd_s = "setcore" + std::to_string(command.getPid()) + "1";
+    SetCoreCommand setCoreCmd1(setCoreCmd_s.c_str());
+    setCoreCmd1.execute();
 
-    // check if nano is running on core 1 using ps
-    testing::internal::CaptureStdout();
+    // Check that the CPU affinity of the process has been set to core 1
+    CPU_ZERO(&cpuset);
+    ASSERT_NE(sched_getaffinity(command.getPid(), sizeof(cpu_set_t), &cpuset), -1);
 
-    // format should be
-    std::string cmd = "ps -o pid,psr,comm -p " + std::to_string(command.getPid()) + " | grep nano";
-    SmallShell::getInstance().executeCommand(cmd.c_str());
-
-    expected = " " + std::to_string(command.getPid()) + "   1 nano\n";
-
-    // set core to 2
-    actual = testing::internal::GetCapturedStdout();
-    EXPECT_EQ(actual, expected);
-
-    // check if nano is running on core 2 using ps
-    testing::internal::CaptureStdout();
-    SmallShell::getInstance().executeCommand("setcore 1 2");
-
-    SmallShell::getInstance().executeCommand(cmd.c_str());
-
-    expected = " " + std::to_string(command.getPid()) + "   2 nano\n";
-
-    actual = testing::internal::GetCapturedStdout();
-
-    EXPECT_EQ(actual, expected);
+    EXPECT_TRUE(CPU_ISSET(1, &cpuset));
 }

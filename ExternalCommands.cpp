@@ -4,7 +4,7 @@
 #include <unistd.h>
 #include <fcntl.h>
 
-ExternalCommand::ExternalCommand(const char *cmd_line) : cmd_line(cmd_line), Command(cmd_line)
+ExternalCommand::ExternalCommand(const char *cmd_line, time_t timeout) : Command(cmd_line), cmd_line(cmd_line), timeout(timeout)
 {
     this->_executeInBackground = CommandUtils::_isBackgroundComamnd(cmd_line);
 }
@@ -18,7 +18,7 @@ void ExternalCommand::execute()
         // Prepare input array
         char **arg_v = new char *[cmd_v.size() + 1];
 
-        for (int i = 0; i < cmd_v.size(); i++)
+        for (size_t i = 0; i < cmd_v.size(); i++)
         {
             arg_v[i] = new char[cmd_v[i].length() + 1];
             strcpy(arg_v[i], cmd_v[i].c_str());
@@ -31,30 +31,30 @@ void ExternalCommand::execute()
         if (execvp(cmd_v[0].c_str(), arg_v) == -1)
         {
             // TODO: Handle error, check required message
-            perror("smash error: execvp:");
+            perror("smash error: execvp");
             exit(1);
         }
     }
     else if (pid < 0)
     {
         // TODO: Handle error, check required message
-        perror("smash error: fork: ");
+        perror("smash error: fork");
     }
     // Parent process
     else
     {
         // add to jobs list
-        auto jobEntry = SmallShell::getInstance().getJobsList().addJob(pid, this->cmd_line);
         if (!this->_executeInBackground)
         {
             // wait for child process to finish
-            SmallShell::getInstance().setForeground(jobEntry);
-            waitpid(pid, NULL, WUNTRACED);
+            pid_t pidr = waitpid(pid, NULL, 0);
+            if (pidr == -1)
+            {
+                perror("smash error: waitpid");
+            }
+            return;
         }
+        auto jobEntry = SmallShell::getInstance().getJobsList().addJob(pid, this->cmd_line, this->timeout);
+        this->job_id = jobEntry;
     }
-}
-
-int ExternalCommand::getPid()
-{
-    return pid;
 }

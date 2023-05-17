@@ -3,6 +3,7 @@
 #include "ExternalCommands.h"
 #include <ctime>
 #include <vector>
+#include <map>
 class JobsList
 {
     enum JobStatus
@@ -19,12 +20,24 @@ public:
     public:
         std::string cmd;
         int jobId;
-        int jobPid;
+        pid_t jobPid;
         JobStatus status;
         time_t timeStarted;
+        time_t timeoutTime;
+        bool isForeground = false;
 
-        JobEntry(std::string cmd, int jobId, int pid) : cmd(cmd), jobId(jobId), jobPid(pid), status(status), timeStarted(time(nullptr))
+        JobEntry(std::string cmd, int jobId, int pid, time_t timeout = -1) : cmd(cmd), jobId(jobId), jobPid(pid)
         {
+            timeStarted = time(nullptr);
+
+            if (timeout != -1)
+            {
+                timeoutTime = timeStarted + timeout;
+            }
+            else
+            {
+                timeoutTime = -1;
+            }
         }
 
         int getJobId()
@@ -32,20 +45,18 @@ public:
             return jobId;
         }
 
-        int getPid()
+        pid_t getPid()
         {
             return jobPid;
         }
 
         JobStatus getStatus()
         {
-
-            pid_t wpid;
-            int st = getProcessStatus(wpid);
-
+            int st;
+            pid_t wpid = waitpid(this->getPid(), &st, WUNTRACED | WNOHANG);
             if (wpid == -1)
             {
-                return DONE;
+                return REMOVED;
             }
 
             if (wpid == 0)
@@ -53,15 +64,15 @@ public:
                 return status;
             }
 
-            if (WIFEXITED(st) || WIFSIGNALED(st))
-            {
-                // printf("child exited, status=%d\n", WEXITSTATUS(st));
-                status = DONE;
-            }
-            else if (WIFSTOPPED(st))
+            if (WIFSTOPPED(st))
             {
                 // printf("child stopped (signal %d)\n", WSTOPSIG(st));
                 status = STOPPED;
+            }
+            else if (WIFEXITED(st) || WIFSIGNALED(st))
+            {
+                // printf("child exited, status=%d\n", WEXITSTATUS(st));
+                status = DONE;
             }
             else if (WIFCONTINUED(st))
             {
@@ -78,19 +89,22 @@ public:
 
         void killProcess()
         {
+            status = REMOVED;
             sigProcess(SIGKILL);
             return;
         }
 
         void continueProcess()
         {
+            status = RUNNING;
             sigProcess(SIGCONT);
             return;
         }
 
         void stopProcess()
         {
-            sigProcess(SIGTSTP);
+            status = STOPPED;
+            sigProcess(SIGSTOP);
             return;
         }
 
@@ -99,15 +113,9 @@ public:
             return cmd;
         }
 
-        int getProcessStatus(pid_t &retPid)
-        {
-            int status;
-            retPid = waitpid(this->getPid(), &status, WUNTRACED | WNOHANG | WCONTINUED);
-            return status;
-        }
-
         void sigProcess(int _sig)
         {
+            // printf("smash > signal %d was sent to pid %d\n", _sig, this->getPid());
             if (kill(this->getPid(), _sig) == -1)
             {
                 perror("smash error: kill failed");
@@ -117,13 +125,14 @@ public:
     // TODO: Add your data members
 private:
     std::vector<JobEntry> jobs;
+    std::map<time_t, int> timeoutMap;
     int maxJobId;
 
 public:
     JobsList();
     ~JobsList();
     std::vector<JobEntry> &getJobsVectorList();
-    int addJob(pid_t pid, std::string cmd);
+    int addJob(pid_t pid, std::string cmd, time_t timeout = -1);
     void printJobsList(std::ostream &out = std::cout);
     void killAllJobs();
     void removeFinishedJobs();
@@ -137,6 +146,8 @@ public:
     bool continueJob(int jobId);
     int size();
     int countStoppedJobs();
+
+    void timeoutJob();
 
     // TODO: Add extra methods or modify exisitng ones as needed
 };

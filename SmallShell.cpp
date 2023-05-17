@@ -91,6 +91,38 @@ void SmallShell::executeCommand(const char *cmd_line)
     std::string cmd_s = _trim(std::string(cmd_line));
     // handle pipe
 
+    // handle timeout (this will of course be refactored nicely :)
+    if (cmd_s.find("timeout") == 0)
+    {
+        // split by space
+        std::vector<std::string> cmd_v = _split(cmd_s, ' ');
+
+        // check if timeout is valid
+        if (cmd_v.size() < 3)
+        {
+            std::cerr << "smash error: timeout: invalid arguments" << std::endl;
+            return;
+        }
+
+        // get timeout
+        std::string timeout_s = cmd_v[1];
+
+        // create external command out of the rest of the command
+        std::string timeout_cmd = "";
+        for (int i = 2; i < cmd_v.size(); i++)
+        {
+            timeout_cmd += cmd_v[i];
+            timeout_cmd += " ";
+        }
+
+        ExternalCommand command = ExternalCommand(timeout_cmd.c_str(), std::stoi(timeout_s));
+
+        command.setIODescriptors();
+        command.execute();
+        command.cleanup();
+        return;
+    }
+
     if (cmd_s.find("|") != std::string::npos)
     {
         std::vector<std::string> cmd_v = _split(cmd_s, '|');
