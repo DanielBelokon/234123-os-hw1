@@ -173,9 +173,9 @@ TEST(JobsTests, BasicList)
     std::string actual = testing::internal::GetCapturedStdout();
     std::string expected;
     // TODO: print the actual command received or the name?
-    expected += "[1]sleep 5 & : " + std::to_string(command1->getPid()) + " 0 secs\n";
-    expected += "[2]sleep 5 & : " + std::to_string(command2->getPid()) + " 0 secs\n";
-    expected += "[3]sleep 5 & : " + std::to_string(command3->getPid()) + " 0 secs\n";
+    expected += "[1] sleep 5 & : " + std::to_string(command1->getPid()) + " 0 secs\n";
+    expected += "[2] sleep 5 & : " + std::to_string(command2->getPid()) + " 0 secs\n";
+    expected += "[3] sleep 5 & : " + std::to_string(command3->getPid()) + " 0 secs\n";
 
     EXPECT_EQ(expected, actual);
     SmallShell::getInstance().getJobsList().killAllJobs();

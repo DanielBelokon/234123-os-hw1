@@ -18,7 +18,7 @@ void ExternalCommand::execute()
         // Prepare input array
         char **arg_v = new char *[cmd_v.size() + 1];
 
-        for (int i = 0; i < cmd_v.size(); i++)
+        for (size_t i = 0; i < cmd_v.size(); i++)
         {
             arg_v[i] = new char[cmd_v[i].length() + 1];
             strcpy(arg_v[i], cmd_v[i].c_str());
@@ -55,5 +55,6 @@ void ExternalCommand::execute()
             return;
         }
         auto jobEntry = SmallShell::getInstance().getJobsList().addJob(pid, this->cmd_line, this->timeout);
+        this->job_id = jobEntry;
     }
 }

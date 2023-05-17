@@ -60,12 +60,13 @@ void JobsList::killAllJobs()
 
 void JobsList::removeFinishedJobs()
 {
-    for (int i = 0; i < jobs.size(); i++)
+    for (std::size_t i = 0; i < jobs.size(); i++)
     {
         JobStatus status = jobs[i].getStatus();
         if (status == DONE || status == REMOVED)
         {
             jobs.erase(jobs.begin() + i);
+            i = -1;
         }
     }
     updateMaxJobId();

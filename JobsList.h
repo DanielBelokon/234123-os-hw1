@@ -20,7 +20,7 @@ public:
     public:
         std::string cmd;
         int jobId;
-        int jobPid;
+        pid_t jobPid;
         JobStatus status;
         time_t timeStarted;
         time_t timeoutTime;
@@ -29,7 +29,7 @@ public:
         JobEntry(std::string cmd, int jobId, int pid, time_t timeout = -1) : cmd(cmd), jobId(jobId), jobPid(pid)
         {
             timeStarted = time(nullptr);
-            status = RUNNING;
+
             if (timeout != -1)
             {
                 timeoutTime = timeStarted + timeout;
@@ -45,17 +45,15 @@ public:
             return jobId;
         }
 
-        int getPid()
+        pid_t getPid()
         {
             return jobPid;
         }
 
         JobStatus getStatus()
         {
-
-            pid_t wpid;
-            int st = getProcessStatus(wpid);
-
+            int st;
+            pid_t wpid = waitpid(this->getPid(), &st, WUNTRACED | WNOHANG);
             if (wpid == -1)
             {
                 return REMOVED;
@@ -113,13 +111,6 @@ public:
         std::string getCmdLine()
         {
             return cmd;
-        }
-
-        int getProcessStatus(pid_t &retPid)
-        {
-            int st;
-            retPid = waitpid(this->getPid(), &st, WUNTRACED | WNOHANG | WCONTINUED | WEXITED);
-            return st;
         }
 
         void sigProcess(int _sig)

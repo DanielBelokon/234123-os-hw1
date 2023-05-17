@@ -308,7 +308,7 @@ void  ChangeFileModeCommand::execute()
         return;
     }
 
-    int mode = atoi(cmd_v[1].c_str());
+    int mode = strtoul(cmd_v[1].c_str(), nullptr, 8);
     std::string path = cmd_v[2];
 
     if (chmod(path.c_str(), mode) < 0)
